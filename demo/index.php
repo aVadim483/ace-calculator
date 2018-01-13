@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of the AceCalculator package
- * https://github.com/aVadim483/AceCalculator
+ * https://github.com/aVadim483/ace-calculator
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code
@@ -27,6 +27,7 @@ echo "
     <a href=\"?demo=operator\">Custom operator</a>
     <a href=\"?demo=extension-bool\">Extension usage</a>
     <a href=\"?demo=extension-colors\">Extension \"Colors\" usage</a>
+    <a href=\"?demo=extension-colors-hexa\">Extension \"ColorsHexa\" usage</a>
 ";
 
 $file = __DIR__ . '/demo.' . $demo . '.php';

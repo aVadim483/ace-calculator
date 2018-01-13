@@ -11,7 +11,7 @@ namespace avadim\AceCalculator\Extension\Colors;
 
 use avadim\AceColors\AceColors;
 
-include_once __DIR__ . '/AceColors.php';
+include_once __DIR__ . '/../Colors/AceColors.php';
 
 /**
  * @param $r
@@ -22,7 +22,7 @@ include_once __DIR__ . '/AceColors.php';
  */
 function rgb($r, $g, $b)
 {
-    return '#' . AceColors::rgbToHex([$r, $g, $b]);
+    return '#' . AceColors::rgbaToHexa([$r, $g, $b, 1]);
 }
 
 /**
@@ -35,7 +35,7 @@ function rgb($r, $g, $b)
  */
 function rgba($r, $g, $b, $a)
 {
-    return '#' . AceColors::rgbToHex([$r, $g, $b, $a]);
+    return '#' . AceColors::rgbaToHexa([$r, $g, $b, $a]);
 }
 
 /**
@@ -47,7 +47,7 @@ function rgba($r, $g, $b, $a)
  */
 function hsl($h, $s, $l)
 {
-    return '#' . AceColors::hslToHex([$h, $s, $l]);
+    return '#' . AceColors::hslaToHexa([$h, $s, $l, 1]);
 }
 
 /**
@@ -60,7 +60,7 @@ function hsl($h, $s, $l)
  */
 function hsla($h, $s, $l, $a)
 {
-    return '#' . AceColors::hslaToHex([$h, $s, $l, $a]);
+    return '#' . AceColors::hslaToHexa([$h, $s, $l, $a]);
 }
 
 /**
@@ -106,6 +106,16 @@ function alpha($hex)
 /**
  * @param $hex
  *
+ * @return float
+ */
+function opacity($hex)
+{
+    return alpha($hex);
+}
+
+/**
+ * @param $hex
+ *
  * @return int
  */
 function hue($hex)
@@ -141,7 +151,7 @@ function lightness($hex)
  */
 function color_red($hex, $value)
 {
-    return (string)(new AceColors($hex))->setRed($value);
+    return '#' . (new AceColors($hex))->setRed($value)->getHexa();
 }
 
 /**
@@ -152,7 +162,7 @@ function color_red($hex, $value)
  */
 function color_green($hex, $value)
 {
-    return (string)(new AceColors($hex))->setGreen($value);
+    return '#' . (new AceColors($hex))->setGreen($value)->getHexa();
 }
 
 /**
@@ -163,7 +173,7 @@ function color_green($hex, $value)
  */
 function color_blue($hex, $value)
 {
-    return (string)(new AceColors($hex))->setBlue($value);
+    return '#' . (new AceColors($hex))->setBlue($value)->getHexa();
 }
 
 /**
@@ -174,7 +184,18 @@ function color_blue($hex, $value)
  */
 function color_alpha($hex, $value)
 {
-    return (string)(new AceColors($hex))->setAlpha($value);
+    return '#' . (new AceColors($hex))->setAlpha($value)->getHexa();
+}
+
+/**
+ * @param string $hex
+ * @param float|string $value
+ *
+ * @return string
+ */
+function color_opacity($hex, $value)
+{
+    return color_alpha($hex, $value);
 }
 
 /**
@@ -185,7 +206,7 @@ function color_alpha($hex, $value)
  */
 function color_hue($hex, $value)
 {
-    return (string)(new AceColors($hex))->setHue($value);
+    return '#' . (new AceColors($hex))->setHue($value)->getHexa();
 }
 
 /**
@@ -196,7 +217,7 @@ function color_hue($hex, $value)
  */
 function color_saturation($hex, $value)
 {
-    return (string)(new AceColors($hex))->setSaturation($value);
+    return '#' . (new AceColors($hex))->setSaturation($value)->getHexa();
 }
 
 /**
@@ -207,7 +228,7 @@ function color_saturation($hex, $value)
  */
 function color_lightness($hex, $value)
 {
-    return (string)(new AceColors($hex))->setLightness($value);
+    return '#' . (new AceColors($hex))->setLightness($value)->getHexa();
 }
 
 /**
@@ -217,7 +238,7 @@ function color_lightness($hex, $value)
  */
 function complementary($hex)
 {
-    return (string)(new AceColors($hex))->complementary();
+    return '#' . (new AceColors($hex))->complementary()->getHexa();
 }
 
 /**
@@ -227,7 +248,7 @@ function complementary($hex)
  */
 function darken($hex)
 {
-    return (string)(new AceColors($hex))->darken();
+    return '#' . (new AceColors($hex))->darken()->getHexa();
 }
 
 /**
@@ -237,7 +258,7 @@ function darken($hex)
  */
 function lighten($hex)
 {
-    return (string)(new AceColors($hex))->lighten();
+    return '#' . (new AceColors($hex))->lighten()->getHexa();
 }
 
 // EOF

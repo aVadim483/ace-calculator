@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of the AceCalculator package
- * https://github.com/aVadim483/AceCalculator
+ * https://github.com/aVadim483/ace-calculator
  *
  * Based on NeonXP/MathExecutor by Alexander Kiryukhin
  *
@@ -601,12 +601,12 @@ class AceCalculator
         $calculator = $this->getCalculator();
         $result = $calculator->calculate($tokensStack, $this->variables, $this->identifiers);
 
-        if (!$resultVariable) {
-            $resultVariable = $this->getConfigOption('result_variable');
-        }
+        $totalResultVar = $this->getConfigOption('result_variable');
         if ($resultVariable) {
-            $this->setVar($resultVariable ?: self::RESULT_VARIABLE, $result);
+            $this->setVar($resultVariable, $result);
         }
+        $this->setVar($totalResultVar ?: self::RESULT_VARIABLE, $result);
+
         return $this;
     }
 
