@@ -245,9 +245,9 @@ function color_invert($hex)
  *
  * @return string
  */
-function color_darken($hex)
+function color_darken($hex, $value)
 {
-    return (string)(new AceColors($hex))->darken();
+    return (string)(new AceColors($hex))->darken($value);
 }
 
 /**
@@ -255,9 +255,9 @@ function color_darken($hex)
  *
  * @return string
  */
-function color_lighten($hex)
+function color_lighten($hex, $value)
 {
-    return (string)(new AceColors($hex))->lighten();
+    return (string)(new AceColors($hex))->lighten($value);
 }
 
 // EOF

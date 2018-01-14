@@ -12,9 +12,9 @@ $the_same = $calculator
     ->calc('hsla(hue($rgba), saturation($rgba), lightness($rgba), alpha($rgba))')
     ->result();
 
-$darken = $calculator->execute('color_darken("#ff007fcc")');
+$darken = $calculator->execute('color_darken(#ff007fcc, 15)');
 
-$lighten = $calculator->execute('color_lighten("#ff007fcc")');
+$lighten = $calculator->execute('color_lighten(#ff007fcc, 20)');
 
 $complementary = $calculator
     ->calc('color_complementary(#ff007fcc)', '$new')

@@ -38,7 +38,7 @@ return [
 
         'color_complementary'   => ['\avadim\AceCalculator\Extension\Colors\color_complementary', 1],
         'color_invert'          => ['\avadim\AceCalculator\Extension\Colors\color_invert', 1],
-        'color_darken'          => ['\avadim\AceCalculator\Extension\Colors\color_darken', 1],
-        'color_lighten'         => ['\avadim\AceCalculator\Extension\Colors\color_lighten', 1],
+        'color_darken'          => ['\avadim\AceCalculator\Extension\Colors\color_darken', 2],
+        'color_lighten'         => ['\avadim\AceCalculator\Extension\Colors\color_lighten', 2],
     ],
 ];
