@@ -26,7 +26,7 @@ return [
         'color_alpha'           => ['\avadim\AceCalculator\Extension\ColorsHexa\color_alpha', 2],
         'color_hue'             => ['\avadim\AceCalculator\Extension\ColorsHexa\color_hue', 2],
         'color_saturation'      => ['\avadim\AceCalculator\Extension\ColorsHexa\color_saturation', 2],
-        'color_desaturation'    => ['\avadim\AceCalculator\Extension\ColorsHexa\color_saturation', 2],
+        'color_desaturation'    => ['\avadim\AceCalculator\Extension\ColorsHexa\color_desaturation', 2],
         'color_lightness'       => ['\avadim\AceCalculator\Extension\ColorsHexa\color_lightness', 2],
 
         'color_complementary'   => ['\avadim\AceCalculator\Extension\ColorsHexa\color_complementary', 1],
