@@ -5,25 +5,23 @@ include __DIR__ . '/../src/autoload.php';
 $calculator = new avadim\AceCalculator\AceCalculator();
 $calculator->loadExtension('ColorsHexa');
 
-$color = $calculator->execute('rgba(255, 0, 127, "80%")');
+$color = $calculator->execute('rgba(31, 0, 127, "80%")');
 
 $the_same = $calculator
     ->calc('rgba(255, 0, 127, 0.8)', '$rgba')  // calc expression and save result in $rgb
     ->calc('hsla(hue($rgba), saturation($rgba), lightness($rgba), alpha($rgba))')
     ->result();
 
-$darken = $calculator->execute('color_darken(#ff007fcc, 15)');
+$darken = $calculator->execute('color_darken(#1f007fcc, 15)');
 
-$lighten = $calculator->execute('color_lighten(#ff007fcc, 20)');
+$lighten = $calculator->execute('color_lighten(#1f007fcc, 20)');
 
-$complementary = $calculator
-    ->calc('color_complementary(#ff007fcc)', '$new')
-    ->result();
+$complementary = $calculator->execute('color_complementary(#1f007fcc)');
 
-$red    = $calculator->execute('red(#ff007fcc)');
-$green  = $calculator->execute('green(#ff007fcc)');
-$blue   = $calculator->execute('blue(#ff007fcc)');
-$alpha  = $calculator->execute('alpha(#ff007fcc)');
+$red    = $calculator->execute('red(#1f007fcc)');
+$green  = $calculator->execute('green(#1f007fcc)');
+$blue   = $calculator->execute('blue(#1f007fcc)');
+$alpha  = $calculator->execute('alpha(#1f007fcc)');
 
 echo "<table>
 <tr><td>color:          <td></td><td>$color</td></tr>

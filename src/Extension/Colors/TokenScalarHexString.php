@@ -11,6 +11,7 @@
 
 namespace avadim\AceCalculator\Extension\Colors;
 
+use avadim\AceCalculator\Generic\AbstractToken;
 use avadim\AceCalculator\Generic\AbstractTokenScalar;
 
 /**
@@ -20,9 +21,8 @@ use avadim\AceCalculator\Generic\AbstractTokenScalar;
  */
 class TokenScalarHexString extends AbstractTokenScalar
 {
-    protected static $pattern = '/^\#[0-9,a-f]+$/i';
-    protected static $matching = self::MATCH_REGEX;
-    protected static $lexemes_max = 2;
+    protected static $pattern = '/^\#[0-9a-f]+$/i';
+    protected static $matching = self::MATCH_CALLBACK;
 
     /**
      * @param string $lexeme
@@ -33,5 +33,30 @@ class TokenScalarHexString extends AbstractTokenScalar
         parent::__construct($lexeme, $options);
         $this->lexeme = $lexeme;
     }
+
+    /**
+     * @param string          $lexeme
+     * @param AbstractToken[] $prevTokens
+     * @param array           $allLexemes
+     * @param int             $lexemeNum
+     *
+     * @return bool
+     */
+    public static function isMatch($lexeme, $prevTokens, $allLexemes, &$lexemeNum)
+    {
+        if ($lexeme === '#') {
+            $i = 0;
+            while (isset($allLexemes[$lexemeNum + $i + 1]) && preg_match(self::$pattern, $lexeme . $allLexemes[$lexemeNum + $i + 1])) {
+                ++$i;
+                $lexeme .= $allLexemes[$lexemeNum + $i];
+            }
+            if ($lexeme !== '#') {
+                $lexemeNum += $i; //isset($allLexemes[$lexemeNum + $i]) ? $i - 1 : $i;
+                return $lexeme;
+            }
+        }
+        return false;
+    }
+
 
 }

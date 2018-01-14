@@ -106,8 +106,8 @@ class Lexer
         foreach($phpTokens as $phpToken) {
             if (is_string($phpToken)) {
                 $lexemeStr = $phpToken;
-            } elseif(isset($phpToken[0], $phpToken[1]) && $phpToken[0] !== T_WHITESPACE) {
-                $lexemeStr = $phpToken[1];
+            } elseif(isset($phpToken[0], $phpToken[1])) {
+                $lexemeStr = ($phpToken[0] === T_WHITESPACE) ? ' ' : $phpToken[1];
             } else {
                 $lexemeStr = null;
             }
@@ -137,7 +137,9 @@ class Lexer
         $lexemeNum = 0;
         $lexemeCnt = count($lexemes);
         while ($lexemeNum < $lexemeCnt) {
-            $tokensStream[] = $tokenFactory->createToken($lexemes[$lexemeNum], $tokensStream, $lexemes, $lexemeNum);
+            if ($lexemes[$lexemeNum] !== ' ') {
+                $tokensStream[] = $tokenFactory->createToken($lexemes[$lexemeNum], $tokensStream, $lexemes, $lexemeNum);
+            }
             ++$lexemeNum;
         }
         /*

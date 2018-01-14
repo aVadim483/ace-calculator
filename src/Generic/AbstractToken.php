@@ -108,12 +108,14 @@ abstract class AbstractToken
     }
 
     /**
-     * @param string           $tokenStr
+     * @param string          $tokenStr
      * @param AbstractToken[] $prevTokens
+     * @param array           $allLexemes
+     * @param int             $lexemeNum
      *
      * @return bool
      */
-    public static function isMatch($tokenStr, $prevTokens)
+    public static function isMatch($tokenStr, $prevTokens, $allLexemes, &$lexemeNum)
     {
         return static::$pattern === $tokenStr;
     }

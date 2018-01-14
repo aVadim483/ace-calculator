@@ -103,11 +103,11 @@ class AceColors
             } elseif ($color = self::_checkHsl($input, true)) {
                 $this->setHsl($color);
             } else {
-                static::_error(self::ERROR_COLOR_FORMAT);
+                static::_error(self::ERROR_COLOR_FORMAT, $input);
             }
         }
         if (empty($color)) {
-            static::_error(self::ERROR_COLOR_FORMAT);
+            static::_error(self::ERROR_COLOR_FORMAT, $input);
         }
     }
 
@@ -131,13 +131,21 @@ class AceColors
 
     /**
      * @param $code
+     * @param $param
      */
-    protected static function _error($code)
+    protected static function _error($code, $param = null)
     {
-        if (!empty(self::$errors[$code])) {
-            throw new \RuntimeException(self::$errors[$code]);
+        if ($param) {
+            if (is_scalar($param)) {
+                $param = ' -- ' . $param;
+            } else {
+                $param = print_r($param, true);
+            }
         }
-        throw new \RuntimeException('Unknown error');
+        if (!empty(self::$errors[$code])) {
+            throw new \RuntimeException(self::$errors[$code] . $param);
+        }
+        throw new \RuntimeException('Unknown error' . $param);
     }
 
 

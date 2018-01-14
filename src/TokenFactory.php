@@ -164,12 +164,15 @@ class TokenFactory
                         $checkLexeme = '';
                         for($i = 0; $i < $tokenMatching['lexemes_max']; $i++) {
                             $checkLexeme .= $allLexemes[$lexemeNum + $i];
-                            if ($tokenClass::$tokenCallback($checkLexeme, $tokensStream)) {
+                            if ($tokenClass::$tokenCallback($checkLexeme, $tokensStream, $allLexemes, $lexemeNum)) {
                                 $lexemeNum += $i;
                                 return new $tokenClass($checkLexeme, $options);
                             }
                         }
-                    } elseif ($tokenClass::$tokenCallback($lexeme, $tokensStream)) {
+                    } elseif ($callResult = $tokenClass::$tokenCallback($lexeme, $tokensStream, $allLexemes, $lexemeNum)) {
+                        if (is_string($callResult)) {
+                            $lexeme = $callResult;
+                        }
                         return new $tokenClass($lexeme, $options);
                     }
                     break;
