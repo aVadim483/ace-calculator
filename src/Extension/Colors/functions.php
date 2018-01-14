@@ -225,7 +225,7 @@ function color_lightness($hex, $value)
  *
  * @return string
  */
-function complementary($hex)
+function color_complementary($hex)
 {
     return (string)(new AceColors($hex))->complementary();
 }
@@ -235,7 +235,17 @@ function complementary($hex)
  *
  * @return string
  */
-function darken($hex)
+function color_invert($hex)
+{
+    return (string)(new AceColors($hex))->invert();
+}
+
+/**
+ * @param string $hex
+ *
+ * @return string
+ */
+function color_darken($hex)
 {
     return (string)(new AceColors($hex))->darken();
 }
@@ -245,7 +255,7 @@ function darken($hex)
  *
  * @return string
  */
-function lighten($hex)
+function color_lighten($hex)
 {
     return (string)(new AceColors($hex))->lighten();
 }

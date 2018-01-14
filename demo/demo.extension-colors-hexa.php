@@ -12,18 +12,18 @@ $the_same = $calculator
     ->calc('hsla(hue($rgba), saturation($rgba), lightness($rgba), alpha($rgba))')
     ->result();
 
-$darken = $calculator->execute('darken("#ff007fcc")');
+$darken = $calculator->execute('color_darken("#ff007fcc")');
 
-$lighten = $calculator->execute('lighten("#ff007fcc")');
+$lighten = $calculator->execute('color_lighten("#ff007fcc")');
 
 $complementary = $calculator
-    ->calc('complementary("#ff007fcc")', '$new')
+    ->calc('color_complementary(#ff007fcc)', '$new')
     ->result();
 
-$red    = $calculator->execute('red("#ff007fcc")');
-$green  = $calculator->execute('green("#ff007fcc")');
-$blue   = $calculator->execute('blue("#ff007fcc")');
-$alpha  = $calculator->execute('alpha("#ff007fcc")');
+$red    = $calculator->execute('red(#ff007fcc)');
+$green  = $calculator->execute('green(#ff007fcc)');
+$blue   = $calculator->execute('blue(#ff007fcc)');
+$alpha  = $calculator->execute('alpha(#ff007fcc)');
 
 echo "<table>
 <tr><td>color:          <td></td><td>$color</td></tr>

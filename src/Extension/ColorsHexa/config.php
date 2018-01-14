@@ -28,8 +28,9 @@ return [
         'color_saturation'  => ['\avadim\AceCalculator\Extension\ColorsHexa\color_saturation', 2],
         'color_lightness'   => ['\avadim\AceCalculator\Extension\ColorsHexa\color_lightness', 2],
 
-        'complementary'     => ['\avadim\AceCalculator\Extension\ColorsHexa\complementary', 1],
-        'darken'            => ['\avadim\AceCalculator\Extension\ColorsHexa\darken', 1],
-        'lighten'           => ['\avadim\AceCalculator\Extension\ColorsHexa\lighten', 1],
+        'color_complementary'   => ['\avadim\AceCalculator\Extension\ColorsHexa\color_complementary', 1],
+        'color_invert'          => ['\avadim\AceCalculator\Extension\ColorsHexa\color_invert', 1],
+        'color_darken'          => ['\avadim\AceCalculator\Extension\ColorsHexa\color_darken', 1],
+        'color_lighten'         => ['\avadim\AceCalculator\Extension\ColorsHexa\color_lighten', 1],
     ],
 ];

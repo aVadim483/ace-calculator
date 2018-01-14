@@ -154,7 +154,7 @@ function color_lightness($hex, $value)
  *
  * @return string
  */
-function complementary($hex)
+function color_complementary($hex)
 {
     return '#' . (new AceColors($hex))->complementary()->getHexa();
 }
@@ -164,7 +164,17 @@ function complementary($hex)
  *
  * @return string
  */
-function darken($hex)
+function color_invert($hex)
+{
+    return '#' . (new AceColors($hex))->invert()->getHexa();
+}
+
+/**
+ * @param string $hex
+ *
+ * @return string
+ */
+function color_darken($hex)
 {
     return '#' . (new AceColors($hex))->darken()->getHexa();
 }
@@ -174,7 +184,7 @@ function darken($hex)
  *
  * @return string
  */
-function lighten($hex)
+function color_lighten($hex)
 {
     return '#' . (new AceColors($hex))->lighten()->getHexa();
 }
