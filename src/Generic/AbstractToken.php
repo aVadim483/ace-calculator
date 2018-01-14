@@ -34,6 +34,9 @@ abstract class AbstractToken
     /** @var int  */
     protected static $callback = 'isMatch';
 
+    /** @var int  */
+    protected static $lexemes_max = 1;
+
     /** @var string  */
     protected $lexeme;
 
@@ -97,10 +100,11 @@ abstract class AbstractToken
     public static function getMatching($pattern = null)
     {
         return [
-            'pattern'  => (null === $pattern) ? static::$pattern : $pattern,
-            'matching' => static::$matching,
-            'callback' => static::$callback,
-            ];
+            'pattern'       => (null === $pattern) ? static::$pattern : $pattern,
+            'matching'      => static::$matching,
+            'callback'      => static::$callback,
+            'lexemes_max'   => static::$lexemes_max,
+        ];
     }
 
     /**

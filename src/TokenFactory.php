@@ -133,16 +133,16 @@ class TokenFactory
     /**
      * Create token object
      *
-     * @param string $tokenStr      Token as string
+     * @param string $lexeme        Current lexeme
      * @param array  $tokensStream  Stream of previous tokens
-     * @param array  $lexemes       Array of all lexemes
-     * @param int    $lexemeNum     Number of current lexemes
+     * @param array  $allLexemes    Array of all lexemes
+     * @param int    $lexemeNum     Number of current lexeme in array
      *
      * @return mixed
      *
      * @throws LexerException
      */
-    public function createToken($tokenStr, $tokensStream, $lexemes, $lexemeNum)
+    public function createToken($lexeme, $tokensStream, $allLexemes, &$lexemeNum)
     {
         if ($tokensStream) {
             $prevToken = end($tokensStream);
@@ -159,28 +159,48 @@ class TokenFactory
 
             switch ($tokenMatching['matching']) {
                 case AbstractToken::MATCH_CALLBACK:
-                    if ($tokenClass::$tokenCallback($tokenStr, $tokensStream)) {
-                        return new $tokenClass($tokenStr, $options);
+                    if ($tokenMatching['lexemes_max'] > 1) {
+                        // Concatenate several lexemes
+                        $checkLexeme = '';
+                        for($i = 0; $i < $tokenMatching['lexemes_max']; $i++) {
+                            $checkLexeme .= $allLexemes[$lexemeNum + $i];
+                            if ($tokenClass::$tokenCallback($checkLexeme, $tokensStream)) {
+                                $lexemeNum += $i;
+                                return new $tokenClass($checkLexeme, $options);
+                            }
+                        }
+                    } elseif ($tokenClass::$tokenCallback($lexeme, $tokensStream)) {
+                        return new $tokenClass($lexeme, $options);
                     }
                     break;
                 case AbstractToken::MATCH_REGEX:
-                    if (preg_match($tokenMatching['pattern'], $tokenStr)) {
-                        return new $tokenClass($tokenStr, $options);
+                    if ($tokenMatching['lexemes_max'] > 1) {
+                        // Concatenate several lexemes
+                        $checkLexeme = '';
+                        for($i = 0; $i < $tokenMatching['lexemes_max']; $i++) {
+                            $checkLexeme .= $allLexemes[$lexemeNum + $i];
+                            if (preg_match($tokenMatching['pattern'], $checkLexeme)) {
+                                $lexemeNum += $i;
+                                return new $tokenClass($checkLexeme, $options);
+                            }
+                        }
+                    } elseif (preg_match($tokenMatching['pattern'], $lexeme)) {
+                        return new $tokenClass($lexeme, $options);
                     }
                     break;
                 case AbstractToken::MATCH_NUMERIC:
-                    if (is_numeric($tokenStr)) {
-                        return new $tokenClass($tokenStr, $options);
+                    if (is_numeric($lexeme)) {
+                        return new $tokenClass($lexeme, $options);
                     }
                     break;
                 case AbstractToken::MATCH_STRING:
                 default:
-                    if ($tokenMatching['pattern'] === $tokenStr) {
-                        return new $tokenClass($tokenStr, $options);
+                    if ($tokenMatching['pattern'] === $lexeme) {
+                        return new $tokenClass($lexeme, $options);
                     }
             }
         }
-        throw new LexerException('Unknown token "' . $tokenStr . '"', LexerException::LEXER_UNKNOWN_TOKEN);
+        throw new LexerException('Unknown token "' . $lexeme . '"', LexerException::LEXER_UNKNOWN_TOKEN);
     }
 
     /**

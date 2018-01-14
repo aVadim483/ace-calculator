@@ -39,6 +39,13 @@ class AceCalculator
     private $config = [];
 
     /**
+     * Loaded extensions
+     *
+     * @var array
+     */
+    private $extensions = [];
+
+    /**
      * @var Container
      */
     private $container;
@@ -322,6 +329,11 @@ class AceCalculator
         if (is_file($configFile)) {
             $config = include($configFile);
             if (is_array($config)) {
+                if (isset($config['extensions'])) {
+                    foreach((array)$config['extensions'] as $extension) {
+                        $this->loadExtension($extension);
+                    }
+                }
                 if (isset($config['include'])) {
                     $dir = dirname($configFile) . '/';
                     $includes = (array)$config['include'];
@@ -357,10 +369,14 @@ class AceCalculator
      */
     public function loadExtension($extensionName, $path = null)
     {
-        if (null === $path) {
-            $path = __DIR__ . '/Extension/' . $extensionName . '/config.php';
+        if (!isset($this->extensions[$extensionName])) {
+            if (null === $path) {
+                $path = __DIR__ . '/Extension/' . $extensionName . '/config.php';
+            }
+            $this->loadConfig($path);
+            $this->extensions[$extensionName] = $path;
         }
-        return $this->loadConfig($path);
+        return $this;
     }
 
     /**

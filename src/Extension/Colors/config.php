@@ -11,6 +11,9 @@ return [
     'include' => [
         'functions.php',
     ],
+    'tokens' => [
+        'hex_string'        => '\avadim\AceCalculator\Extension\Colors\TokenScalarHexString',
+    ],
     'functions' => [
         'rgb'   => ['\avadim\AceCalculator\Extension\Colors\rgb', 3],
         'rgba'  => ['\avadim\AceCalculator\Extension\Colors\rgba', 4],

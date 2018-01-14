@@ -7,11 +7,9 @@
  * file that was distributed with this source code
  */
 
-namespace avadim\AceCalculator\Extension\Colors;
+namespace avadim\AceCalculator\Extension\ColorsHexa;
 
 use avadim\AceColors\AceColors;
-
-include_once __DIR__ . '/../Colors/AceColors.php';
 
 /**
  * @param $r
@@ -61,86 +59,6 @@ function hsl($h, $s, $l)
 function hsla($h, $s, $l, $a)
 {
     return '#' . AceColors::hslaToHexa([$h, $s, $l, $a]);
-}
-
-/**
- * @param $hex
- *
- * @return float
- */
-function red($hex)
-{
-    return (new AceColors($hex))->red;
-}
-
-/**
- * @param $hex
- *
- * @return float
- */
-function green($hex)
-{
-    return (new AceColors($hex))->green;
-}
-
-/**
- * @param $hex
- *
- * @return float
- */
-function blue($hex)
-{
-    return (new AceColors($hex))->blue;
-}
-
-/**
- * @param $hex
- *
- * @return float
- */
-function alpha($hex)
-{
-    return (new AceColors($hex))->alpha;
-}
-
-/**
- * @param $hex
- *
- * @return float
- */
-function opacity($hex)
-{
-    return alpha($hex);
-}
-
-/**
- * @param $hex
- *
- * @return int
- */
-function hue($hex)
-{
-    return (new AceColors($hex))->hue;
-}
-
-/**
- * @param $hex
- *
- * @return float
- */
-function saturation($hex)
-{
-    return (new AceColors($hex))->saturation;
-}
-
-/**
- * @param $hex
- *
- * @return float
- */
-function lightness($hex)
-{
-    return (new AceColors($hex))->lightness;
 }
 
 /**

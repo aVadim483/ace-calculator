@@ -106,6 +106,16 @@ function alpha($hex)
 /**
  * @param $hex
  *
+ * @return float
+ */
+function opacity($hex)
+{
+    return alpha($hex);
+}
+
+/**
+ * @param $hex
+ *
  * @return int
  */
 function hue($hex)

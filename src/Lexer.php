@@ -133,13 +133,22 @@ class Lexer
         // convert lexemes to tokens
         $tokensStream = [];
         $lexemes = $this->getLexemes();
-        foreach ($lexemes as $lexemeNum => $lexemeStr) {
-            $tokensStream[] = $this->getTokenFactory()->createToken($lexemeStr, $tokensStream, $lexemes, $lexemeNum);
+        $tokenFactory = $this->getTokenFactory();
+        $lexemeNum = 0;
+        $lexemeCnt = count($lexemes);
+        while ($lexemeNum < $lexemeCnt) {
+            $tokensStream[] = $tokenFactory->createToken($lexemes[$lexemeNum], $tokensStream, $lexemes, $lexemeNum);
+            ++$lexemeNum;
         }
+        /*
+        foreach ($lexemes as $lexemeNum => $lexemeStr) {
+            $tokensStream[] = $tokenFactory->createToken($lexemeStr, $tokensStream, $lexemes, $lexemeNum);
+        }
+        */
         // convert identifiers to functions
         foreach ($tokensStream as $num => $token) {
             if ($token instanceof TokenIdentifier && isset($tokensStream[$num + 1]) && $tokensStream[$num + 1] instanceof TokenLeftBracket) {
-                $tokensStream[$num] = $this->getTokenFactory()->createFunction($token->getLexeme());
+                $tokensStream[$num] = $tokenFactory->createFunction($token->getLexeme());
             }
         }
         return $tokensStream;
