@@ -266,6 +266,9 @@ class AceColors
      */
     public function setAlpha($value)
     {
+        if ($value > 1 && $value <= 100) {
+            $value /= 100;
+        }
         $this->alpha = $value;
 
         return $this;
@@ -290,6 +293,9 @@ class AceColors
      */
     public function setSaturation($value)
     {
+        if ($value > 1 && $value <= 100) {
+            $value /= 100;
+        }
         $this->saturation = $value;
 
         return $this;
@@ -302,6 +308,9 @@ class AceColors
      */
     public function setLightness($value)
     {
+        if ($value > 1 && $value <= 100) {
+            $value /= 100;
+        }
         $this->lightness = $value;
 
         return $this;

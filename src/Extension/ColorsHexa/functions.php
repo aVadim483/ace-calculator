@@ -151,7 +151,7 @@ function color_desaturation($hex, $value)
     } elseif ($value) {
         $value = '-(' . $value . ')';
     }
-    return (string)(new AceColors($hex))->setSaturation($value);
+    return '#' . (new AceColors($hex))->setSaturation($value)->getHexa();
 }
 
 /**
