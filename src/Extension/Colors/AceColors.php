@@ -893,6 +893,42 @@ class AceColors
     }
 
     /**
+     * @param $value
+     *
+     * @return $this
+     */
+    public function saturate($value)
+    {
+        if (is_numeric($value) && abs($value) > 1 && abs($value) <= 100) {
+            $value /= 100 * (($value < 0) ? -1 : 1);
+        } else {
+            $value = self::_checkValue($value, 1);
+        }
+        $saturation = $this->saturation + $value;
+        if ($saturation < 0) {
+            $this->saturation = 0;
+        } elseif ($saturation > 1) {
+            $this->saturation = 1;
+        } else {
+            $this->saturation = $saturation;
+        }
+        return $this;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return $this
+     */
+    public function desaturate($value)
+    {
+        if (!is_numeric($value)) {
+            $value = -self::_checkValue($value, 1);
+        }
+        return $this->saturate($value);
+    }
+
+    /**
      * Returns the complimentary color
      *
      * @return $this

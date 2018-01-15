@@ -18,7 +18,7 @@ namespace avadim\AceCalculator\Exception;
  */
 abstract class AceCalculatorException extends \Exception
 {
-    const CONFIG_OTHER_ERRORS = 0;
+    const CONFIG_OTHER_ERRORS       = 0;
     const CONFIG_OPERATOR_BAD_INTERFACE = 10;
 
     const LEXER_ERROR               = 20;
@@ -30,4 +30,5 @@ abstract class AceCalculatorException extends \Exception
     const CALC_UNKNOWN_IDENTIFIER   = 32;
     const CALC_INCORRECT_EXPRESSION = 33;
     const CALC_WRONG_FUNC_ARGS      = 34;
+    const CALC_ERROR_OPERATOR       = 35;
 }

@@ -144,22 +144,6 @@ function color_saturation($hex, $value)
  *
  * @return string
  */
-function color_desaturation($hex, $value)
-{
-    if (is_numeric($value)) {
-        $value = -$value;
-    } elseif ($value) {
-        $value = '-(' . $value . ')';
-    }
-    return '#' . (new AceColors($hex))->setSaturation($value)->getHexa();
-}
-
-/**
- * @param string $hex
- * @param float|string $value
- *
- * @return string
- */
 function color_lightness($hex, $value)
 {
     return '#' . (new AceColors($hex))->setLightness($value)->getHexa();
@@ -204,5 +188,29 @@ function color_lighten($hex, $value)
 {
     return '#' . (new AceColors($hex))->lighten($value)->getHexa();
 }
+
+/**
+ * @param string $hex
+ * @param float|string $value
+ *
+ * @return string
+ */
+function color_saturate($hex, $value)
+{
+    return '#' . (new AceColors($hex))->saturate($value)->getHexa();
+}
+
+/**
+ * @param string $hex
+ * @param float|string $value
+ *
+ * @return string
+ */
+function color_desaturate($hex, $value)
+{
+    return '#' . (new AceColors($hex))->desaturate($value)->getHexa();
+}
+
+
 
 // EOF

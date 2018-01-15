@@ -11,6 +11,7 @@
 
 namespace avadim\AceCalculator\Token\Operator;
 
+use avadim\AceCalculator\Exception\CalcException;
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
 use avadim\AceCalculator\Generic\AbstractToken;
 use avadim\AceCalculator\Token\TokenScalarNumber;
@@ -64,13 +65,20 @@ class TokenOperatorMinus extends AbstractTokenOperator
      * @param AbstractToken[] $stack
      *
      * @return TokenScalarNumber
+     * @throws CalcException
      */
     public function execute(&$stack)
     {
         if ($this->unary) {
+            if (count($stack) < 1) {
+                throw new CalcException('Operator "minus" error', CalcException::CALC_ERROR_OPERATOR);
+            }
             $op = array_pop($stack);
             $result = -$op->getValue();
         } else {
+            if (count($stack) < 2) {
+                throw new CalcException('Operator "minus" error', CalcException::CALC_ERROR_OPERATOR);
+            }
             $op2 = array_pop($stack);
             $op1 = array_pop($stack);
             $result = $op1->getValue() - $op2->getValue();

@@ -26,12 +26,13 @@ return [
         'color_alpha'           => ['\avadim\AceCalculator\Extension\ColorsHexa\color_alpha', 2],
         'color_hue'             => ['\avadim\AceCalculator\Extension\ColorsHexa\color_hue', 2],
         'color_saturation'      => ['\avadim\AceCalculator\Extension\ColorsHexa\color_saturation', 2],
-        'color_desaturation'    => ['\avadim\AceCalculator\Extension\ColorsHexa\color_desaturation', 2],
         'color_lightness'       => ['\avadim\AceCalculator\Extension\ColorsHexa\color_lightness', 2],
 
         'color_complementary'   => ['\avadim\AceCalculator\Extension\ColorsHexa\color_complementary', 1],
         'color_invert'          => ['\avadim\AceCalculator\Extension\ColorsHexa\color_invert', 1],
         'color_darken'          => ['\avadim\AceCalculator\Extension\ColorsHexa\color_darken', 2],
         'color_lighten'         => ['\avadim\AceCalculator\Extension\ColorsHexa\color_lighten', 2],
+        'color_saturate'        => ['\avadim\AceCalculator\Extension\ColorsHexa\color_saturate', 2],
+        'color_desaturate'      => ['\avadim\AceCalculator\Extension\ColorsHexa\color_desaturate', 2],
     ],
 ];

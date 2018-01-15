@@ -615,7 +615,11 @@ class AceCalculator
             $tokensStack = $this->cache[$expression];
         }
         $calculator = $this->getCalculator();
-        $result = $calculator->calculate($tokensStack, $this->variables, $this->identifiers);
+        try {
+            $result = $calculator->calculate($tokensStack, $this->variables, $this->identifiers);
+        } catch (CalcException $e) {
+            throw new CalcException('Expression calculation error ' . $e->getMessage() . '. Expression: ' . $expression);
+        }
 
         $totalResultVar = $this->getConfigOption('result_variable');
         if ($resultVariable) {
