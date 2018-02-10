@@ -156,13 +156,14 @@ class TokenFactory
         foreach ($this->tokens as $tokenName => $tokenMatching) {
             $tokenClass = $tokenMatching['class'];
             $tokenCallback = $tokenMatching['callback'];
+            $lexemesMax = !empty($tokenMatching['lexemes_max']) ? $tokenMatching['lexemes_max'] : 1;
 
             switch ($tokenMatching['matching']) {
                 case AbstractToken::MATCH_CALLBACK:
-                    if ($tokenMatching['lexemes_max'] > 1) {
+                    if ($lexemesMax > 1) {
                         // Concatenate several lexemes
                         $checkLexeme = '';
-                        for($i = 0; $i < $tokenMatching['lexemes_max']; $i++) {
+                        for($i = 0; $i < $lexemesMax; $i++) {
                             $checkLexeme .= $allLexemes[$lexemeNum + $i];
                             if ($tokenClass::$tokenCallback($checkLexeme, $tokensStream, $allLexemes, $lexemeNum)) {
                                 $lexemeNum += $i;
@@ -177,10 +178,10 @@ class TokenFactory
                     }
                     break;
                 case AbstractToken::MATCH_REGEX:
-                    if ($tokenMatching['lexemes_max'] > 1) {
+                    if ($lexemesMax > 1) {
                         // Concatenate several lexemes
                         $checkLexeme = '';
-                        for($i = 0; $i < $tokenMatching['lexemes_max']; $i++) {
+                        for($i = 0; $i < $lexemesMax; $i++) {
                             $checkLexeme .= $allLexemes[$lexemeNum + $i];
                             if (preg_match($tokenMatching['pattern'], $checkLexeme)) {
                                 $lexemeNum += $i;

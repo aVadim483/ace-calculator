@@ -1,7 +1,6 @@
 {
     "name": "avadim/ace-calculator",
     "description": "Flexible universal calculator with custom operators, functions and variables",
-    "minimum-stability": "stable",
     "keywords": ["calculator","expression","math","parser","lexer"],
     "homepage": "https://github.com/aVadim483/ace-calculator",
     "license": "MIT",
