@@ -81,6 +81,8 @@ class AceColors
      * AceColors constructor
      *
      * @param string|array $input
+     *
+     * @throws \RuntimeException
      */
     public function __construct($input = null)
     {
@@ -132,6 +134,8 @@ class AceColors
     /**
      * @param $code
      * @param $param
+     *
+     * @throws \RuntimeException
      */
     protected static function _error($code, $param = null)
     {
@@ -562,10 +566,9 @@ class AceColors
 
         $L = ($varMax + $varMin) / 2;
 
-        if ($delMax == 0) {
-            $H = 0;
-            $S = 0;
-        } else {
+        $H = 0;
+        $S = 0;
+        if ($delMax !== 0) {
             if ($L < 0.5) {
                 $S = $delMax / ($varMax + $varMin);
             } else {
@@ -576,11 +579,11 @@ class AceColors
             $delG = ((($varMax - $G) / 6) + ($delMax / 2)) / $delMax;
             $delB = ((($varMax - $B) / 6) + ($delMax / 2)) / $delMax;
 
-            if ($R == $varMax) {
+            if ($R === $varMax) {
                 $H = $delB - $delG;
-            } elseif ($G == $varMax) {
+            } elseif ($G === $varMax) {
                 $H = (1 / 3) + $delR - $delB;
-            } elseif ($B == $varMax) {
+            } elseif ($B === $varMax) {
                 $H = (2 / 3) + $delG - $delR;
             }
 
@@ -608,7 +611,7 @@ class AceColors
      */
     public static function hslToHex($hsl)
     {
-        return static::rgbToHex(static::hslToRGB($hsl));
+        return static::rgbToHex(static::hslToRgb($hsl));
     }
 
     /**
@@ -638,14 +641,13 @@ class AceColors
         // Make sure it's HSL
         $hsl = self::_checkHsl($hsl);
 
-        list($H, $S, $L) = array($hsl['h'] / 360, $hsl['s'], $hsl['l']);
+        list($H, $S, $L) = [$hsl['h'] / 360, $hsl['s'], $hsl['l']];
 
         if ($S == 0) {
             $r = $L * 255;
             $g = $L * 255;
             $b = $L * 255;
         } else {
-
             if ($L < 0.5) {
                 $var_2 = $L * (1 + $S);
             } else {
@@ -1020,7 +1022,7 @@ class AceColors
         // Get the recommended gradient
         $g = $this->getGradientArray($amount);
 
-        $css = "";
+        $css = '';
         /* fallback/image non-cover color */
         $css .= "{$prefix}background-color: #" . $this->_hex . ";{$suffix}";
 
@@ -1188,7 +1190,7 @@ class AceColors
         $len = strlen($hex);
         // Strip # sign is present
         if (($len === 4 || $len === 5 || $len === 7 || $len === 9) && $hex[0] === '#') {
-            $hex = substr($hex, 1);
+            $hex = '' . substr($hex, 1);
             $len--;
         }
         if (strspn($hex, '01234567890abcdef') === $len) {
@@ -1309,9 +1311,8 @@ class AceColors
                     if ($key === 'h') {
                         self::_error(self::ERROR_HSL_FORMAT);
                         return null;
-                    } else {
-                        $value = (float)$value / 100;
                     }
+                    $value = (float)$value / 100;
                 } else {
                     $value = ($key === 'a' && null === $value) ? null : (float)$value;
                 }
@@ -1325,14 +1326,15 @@ class AceColors
      * @param string $rgbStr
      * @param bool   $ignoreError
      *
-     * @return null
+     * @return array|null
      */
     private static function _checkRgbStr($rgbStr, $ignoreError = false)
     {
         if (preg_match('/^(rgba?)\((\d+\%?),(\d+\%?),(\d+\%?)(,([\d\.]+\%?))?\)$/', $rgbStr, $m)) {
             if ($m[1] === 'rgb' && isset($m[2], $m[3], $m[4])) {
                 return [$m[2], $m[3], $m[4]];
-            } elseif ($m[1] === 'rgba' && isset($m[2], $m[3], $m[4], $m[6])) {
+            }
+            if ($m[1] === 'rgba' && isset($m[2], $m[3], $m[4], $m[6])) {
                 return [$m[2], $m[3], $m[4], $m[6]];
             }
         }
@@ -1347,14 +1349,15 @@ class AceColors
      * @param string $hslStr
      * @param bool   $ignoreError
      *
-     * @return null
+     * @return array|null
      */
     private static function _checkHslStr($hslStr, $ignoreError = false)
     {
         if (preg_match('/^(hsla?)\((\d+),([\d\.]+\%?),([\d\.]+\%?)(,([\d\.]+\%?))?\)$/', $hslStr, $m)) {
             if ($m[1] === 'hsl' && isset($m[2], $m[3], $m[4])) {
                 return [$m[2], $m[3], $m[4]];
-            } elseif ($m[1] === 'hsla' && isset($m[2], $m[3], $m[4], $m[6])) {
+            }
+            if ($m[1] === 'hsla' && isset($m[2], $m[3], $m[4], $m[6])) {
                 return [$m[2], $m[3], $m[4], $m[6]];
             }
         }
@@ -1391,7 +1394,7 @@ class AceColors
      */
     public function __toString()
     {
-        return "#" . $this->getHex();
+        return '#' . $this->getHex();
     }
 
     /**
