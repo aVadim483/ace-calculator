@@ -568,7 +568,7 @@ class AceColors
 
         $H = 0;
         $S = 0;
-        if ($delMax !== 0) {
+        if ($delMax > 0) {
             if ($L < 0.5) {
                 $S = $delMax / ($varMax + $varMin);
             } else {
@@ -1193,7 +1193,7 @@ class AceColors
             $hex = '' . substr($hex, 1);
             $len--;
         }
-        if (strspn($hex, '01234567890abcdef') === $len) {
+        if (strspn(strtolower($hex), '01234567890abcdef') === $len) {
             if ($len === 3) {
                 return ['r' => hexdec($hex[0] . $hex[0]), 'g' => hexdec($hex[1] . $hex[1]), 'b' => hexdec($hex[2] . $hex[2]), 'a' => null];
             }
