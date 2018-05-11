@@ -14,13 +14,13 @@ $the_same = $calculator
     ->result();
 
 $darken = $calculator
-    ->execute('darken("#ff007f")');
+    ->execute('color_darken("#ff007f", 15)');
 
 $lighten = $calculator
-    ->execute('lighten("#ff007f")');
+    ->execute('color_lighten("#ff007f", 20)');
 
 $complementary = $calculator
-    ->execute('complementary("#ff007f")');
+    ->execute('color_complementary("#ff007f")');
 
 echo "<table>
 <tr><td>color:          <td></td><td>$color</td></tr>
