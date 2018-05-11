@@ -70,13 +70,15 @@ $calculator->execute('$var1 + $var2');
 
 ## Extra operators and functions
 
-To load extra operators and functions use method `loadExtra()`:
+You can load extensions with extra operators and functions by method `loadExtension()`:
 ```php
-$calculator->loadExtra();
+// load extension 'Bool'
+$calculator->loadExtension('Bool');
 ```
 
-Extra operators are boolean operators: `< <= > >= == !=`
-You can use boolean operators with function `if()`
+This extension load boolean operators: `< <= > >= == !=`
+
+You can use boolean operators with extra function `if()`
 
 ```php
 print $calculator->execute('if(100+20+3 > 111, 23, 34)');
@@ -87,7 +89,7 @@ print $calculator->execute('if(100+20+3 > 111, 23, 34)');
 Add custom function to executor:
 ```php
 $calculator->addFunction('hypotenuse', function($a, $b) {
-    return sqrt($a ** 2 + $b ** 2);
+    return sqrt($a^2 + $b^2);
 }, 2);
 
 print $calculator->execute('hypotenuse(3,4)');
