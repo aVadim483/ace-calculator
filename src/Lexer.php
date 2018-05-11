@@ -186,6 +186,7 @@ class Lexer
         $output = [];
         $stack = [];
         $function = 0;
+        $level = 0;
 
         foreach ($tokensStream as $token) {
             if ($token instanceof TokenFunction) {
@@ -195,8 +196,9 @@ class Lexer
                 $output[] = $token;
             } elseif ($token instanceof TokenLeftBracket) {
                 $stack[] = $token;
-                if ($function > 0) {
+                if ($function > $level) {
                     $output[] = $token;
+                    ++$level;
                 }
             } elseif ($token instanceof TokenComma) {
                 while ($stack && (!$stack[count($stack)-1] instanceof TokenLeftBracket)) {
@@ -206,13 +208,14 @@ class Lexer
                     }
                 }
             } elseif ($token instanceof TokenRightBracket) {
+                --$level;
                 while (($current = array_pop($stack)) && (!$current instanceof TokenLeftBracket)) {
                     $output[] = $current;
                 }
                 if (!empty($stack) && ($stack[count($stack)-1] instanceof TokenFunction)) {
                     $output[] = array_pop($stack);
                 }
-                if ($function > 0) {
+                if ($function > $level) {
                     --$function;
                 }
             } elseif ($token instanceof AbstractTokenOperator) {
