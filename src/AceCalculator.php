@@ -484,6 +484,14 @@ class AceCalculator
     }
 
     /**
+     * @return array
+     */
+    public function getVars()
+    {
+        return $this->variables;
+    }
+
+    /**
      * Add identifier to executor
      *
      * @param string $identifier
