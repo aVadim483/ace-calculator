@@ -19,22 +19,29 @@ use avadim\AceCalculator\Generic\AbstractToken;
  *
  * @package avadim\AceCalculator
  */
-class TokenScalarNumber extends AbstractTokenScalar
+class TokenScalarHexNumber extends AbstractTokenScalar
 {
-    protected static $matching = self::MATCH_NUMERIC;
+    protected static $matching = self::MATCH_CALLBACK;
+
+    /**
+     * @param string           $tokenStr
+     * @param AbstractToken[] $prevTokens
+     * @param array           $allLexemes
+     * @param int             $lexemeNum
+     *
+     * @return bool
+     */
+    public static function isMatch($tokenStr, $prevTokens, $allLexemes, &$lexemeNum)
+    {
+        return preg_match('/^0x[0-9a-f]+/i', $tokenStr);
+    }
 
     /**
      * @return string
      */
     public function getValue()
     {
-        if (is_string($this->value)) {
-            if (false !== strpos($this->value, '.')) {
-                return (float)$this->value;
-            }
-            return (int)$this->value;
-        }
-        return $this->value;
+        return hexdec(substr($this->value, 2));
     }
 
 }

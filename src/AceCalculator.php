@@ -109,7 +109,7 @@ class AceCalculator
         $this->container->set('Processor', $this->createProcessor($this->container));
 
         if (null === $config) {
-            $config = $this->getDefaults();
+             $config = $this->getDefaults();
         }
         $this->setConfig($config);
     }
@@ -193,6 +193,7 @@ class AceCalculator
                 'comma'         => '\avadim\AceCalculator\Token\TokenComma',
                 'number'        => '\avadim\AceCalculator\Token\TokenScalarNumber',
                 'string'        => '\avadim\AceCalculator\Token\TokenScalarString',
+                'hex_number'    => '\avadim\AceCalculator\Token\TokenScalarHexNumber',
                 'variable'      => ['\avadim\AceCalculator\Token\TokenVariable', self::VAR_PREFIX],
                 'identifier'    => '\avadim\AceCalculator\Token\TokenIdentifier',
                 'function'      => '\avadim\AceCalculator\Token\TokenFunction',
@@ -207,7 +208,7 @@ class AceCalculator
             'functions' => [
                 'min'   => ['min', 2, true],
                 'max'   => ['max', 2, true],
-                'avg'   => [function() { return array_sum(func_get_args()) / func_num_args(); }, 2, true],
+                'avg'   => [static function() { return array_sum(func_get_args()) / func_num_args(); }, 2, true],
                 'sqrt'  => 'sqrt',
                 'sin'   => 'sin',
                 'cos'   => 'cos',
@@ -232,6 +233,10 @@ class AceCalculator
      */
     protected function applyConfig($config)
     {
+        if (isset($config['options'])) {
+            $this->config['options'] = $config['options'];
+        }
+
         $tokenFactory = $this->getTokenFactory();
 
         // set default tokens

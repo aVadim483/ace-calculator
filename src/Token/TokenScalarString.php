@@ -29,7 +29,11 @@ class TokenScalarString extends AbstractTokenScalar
      */
     public function __construct($lexeme, $options = [])
     {
-        $value = (string)substr($lexeme, 1, -1);
+        if (($lexeme[0] === '"' || $lexeme[0] === '\'') && ($lexeme[0] === substr($lexeme, -1))) {
+            $value = (string)substr($lexeme, 1, -1);
+        } else {
+            $value = (string)$lexeme;
+        }
         parent::__construct($value, $options);
         $this->lexeme = $lexeme;
     }

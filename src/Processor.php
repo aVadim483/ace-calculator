@@ -170,7 +170,7 @@ class Processor
                     throw new CalcException('Unknown variable "' . $variable . '"', CalcException::CALC_UNKNOWN_VARIABLE);
                 }
                 $value = $variables[$variable];
-                $stack[] = new TokenScalarNumber($value);
+                $stack[] = $this->getTokenFactory()->createScalarToken($value);
             }
         }
         $result = array_pop($stack);

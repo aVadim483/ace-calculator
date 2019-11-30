@@ -22,13 +22,13 @@ if (isset($_GET['demo']) && preg_match('/^[\w\-]+$/', $_GET['demo'])) {
     $demo = 'simple';
 }
 
-echo "
-    <a href=\"?demo=simple\">Base usage</a>
-    <a href=\"?demo=operator\">Custom operator</a>
-    <a href=\"?demo=extension-bool\">Extension usage</a>
-    <a href=\"?demo=extension-colors\">Extension \"Colors\" usage</a>
-    <a href=\"?demo=extension-colors-hexa\">Extension \"ColorsHexa\" usage</a>
-";
+echo '
+    <a href="?demo=simple">Base usage</a>
+    <a href="?demo=operator">Custom operator</a>
+    <a href="?demo=extension-bool">Extension usage</a>
+    <a href="?demo=extension-colors">Extension "Colors" usage</a>
+    <a href="?demo=extension-colors-hexa">Extension "ColorsHexa" usage</a>
+';
 
 $file = __DIR__ . '/demo.' . $demo . '.php';
 if (!is_file($file)) {

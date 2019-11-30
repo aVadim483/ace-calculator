@@ -24,7 +24,7 @@ class TokenFunction extends TokenIdentifier
     /**
      * @param array $stack
      *
-     * @return TokenScalarNumber
+     * @return AbstractTokenScalar
      *
      * @throws CalcException
      */
@@ -55,6 +55,6 @@ class TokenFunction extends TokenIdentifier
         }
         $result = call_user_func_array($callback, array_reverse($args));
 
-        return new TokenScalarNumber($result);
+        return $this->calculator->getTokenFactory()->createScalarToken($result);
     }
 }
