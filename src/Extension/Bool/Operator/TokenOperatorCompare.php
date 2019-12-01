@@ -47,9 +47,11 @@ class TokenOperatorCompare extends AbstractTokenOperator
      */
     public function execute(&$stack)
     {
-        $stack[] = static::$pattern;
-        $result = $this->calculator->callFunction('compare', $stack);
-        return $result;
+        $op2 = array_pop($stack);
+        $op1 = array_pop($stack);
+        $localStack = [$op1, $op2, static::$pattern];
+
+        return $this->calculator->callFunction('compare', $localStack);
     }
 
 }

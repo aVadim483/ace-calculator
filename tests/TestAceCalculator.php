@@ -9,30 +9,12 @@
  * file that was distributed with this source code
  */
 
-namespace avadim\Tests;
+namespace avadim\AceCalculator;
 
-use avadim\AceCalculator\AceCalculator;
+use PHPUnit\Framework\TestCase;
 
-class MathTest extends \PHPUnit_Framework_TestCase
+class TestAceCalculator extends \TestCase
 {
-    /**
-     * @dataProvider providerExpressions
-     */
-    public function testCalculating($expression)
-    {
-        $calculator = new AceCalculator();
-
-        /** @var float $phpResult */
-        eval('$phpResult = ' . $expression . ';');
-        $this->assertEquals($calculator->execute($expression), $phpResult);
-    }
-
-    public function testExponentiation()
-    {
-        $calculator = new AceCalculator();
-        $this->assertEquals($calculator->execute('10 ^ 2'), 100);
-    }
-
     /**
      * Expressions data provider
      */
@@ -68,4 +50,23 @@ class MathTest extends \PHPUnit_Framework_TestCase
             ['100500 * 3.5E-5']
         ];
     }
+
+    /**
+     * @dataProvider providerExpressions
+     */
+    public function testCalculating($expression)
+    {
+        $calculator = new AceCalculator();
+
+        /** @var float $phpResult */
+        eval('$phpResult = ' . $expression . ';');
+        $this->assertEquals($calculator->execute($expression), $phpResult);
+    }
+
+    public function testExponentiation()
+    {
+        $calculator = new AceCalculator();
+        $this->assertEquals($calculator->execute('10 ^ 2'), 100);
+    }
+
 }
