@@ -1,6 +1,4 @@
 # AceCalculator - flexible universal calculator
-[![License](https://poser.pugx.org/avadim/ace-claculator/license)](https://packagist.org/packages/avadim/ace-claculator)
-[![Latest Stable Version](https://poser.pugx.org/avadim/ace-claculator/version)](https://packagist.org/packages/avadim/ace-claculator)
 
 Based on NeonXP/MathExecutor (https://github.com/NeonXP/MathExecutor)
 
@@ -27,7 +25,7 @@ print $calculator->execute('1 + 2 * (2 - (4+10))^2 + sin(10)');
 // variable $_ has result of previous calculation
 print $calculator
         ->calc('4+10')
-        ->calc('1 + 2 * (2 - $_)^2')
+        ->calc('1 + 2 * (2 - $_)^2') // the variable $_ contains the result of the last calculation
         ->calc('$_ + sin(10)')
         ->getResult();
 ```
@@ -97,7 +95,7 @@ print $calculator->execute('hypotenuse(3,4)');
 
 ## Custom operators
 
-Add custom operator to executor:
+Create the class of custom operator:
 
 ```php
 <?php
@@ -144,7 +142,7 @@ class TokenOperatorModulus extends AbstractTokenOperator
 }
 ```
 
-And adding to executor:
+And add the class to executor:
 
 ```php
 $calculator = new avadim\AceClaculator\AceClaculator();
