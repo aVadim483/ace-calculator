@@ -18,16 +18,14 @@ namespace avadim\AceCalculator\Extension\Bool;
  */
 function compare($val1, $val2, $cond = null)
 {
-    if (null === $cond) {
-        if (is_numeric($val1) && is_numeric($val2)) {
-            if ($val1 < $val2) {
-                return -1;
-            }
-            if ($val1 > $val2) {
-                return 1;
-            }
-            return 0;
+    if ((null === $cond) && is_numeric($val1) && is_numeric($val2)) {
+        if ($val1 < $val2) {
+            return -1;
         }
+        if ($val1 > $val2) {
+            return 1;
+        }
+        return 0;
     }
     switch ($cond) {
         case '<':

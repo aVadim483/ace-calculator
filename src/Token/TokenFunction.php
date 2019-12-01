@@ -44,8 +44,13 @@ class TokenFunction extends TokenIdentifier
             }
         }
         if ($variableArguments) {
-            while ($stack && ($token = array_pop($stack)) && !$token instanceof TokenLeftBracket) {
-                $args[] = $token->getValue();
+            while ($stack && ($token = array_pop($stack))) {
+                if (!$token instanceof TokenLeftBracket) {
+                    $args[] = $token->getValue();
+                } else {
+                    $stack[] = $token;
+                    break;
+                }
             }
         } elseif ($stack) {
             $token = array_pop($stack);

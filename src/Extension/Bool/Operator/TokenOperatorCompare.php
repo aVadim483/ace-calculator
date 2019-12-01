@@ -41,11 +41,15 @@ class TokenOperatorCompare extends AbstractTokenOperator
      * @param AbstractToken[] $stack
      *
      * @return AbstractTokenScalar
+     *
+     * @throws \avadim\AceCalculator\Exception\CalcException
+     * @throws \avadim\AceCalculator\Exception\LexerException
      */
     public function execute(&$stack)
     {
         $stack[] = static::$pattern;
-        return $this->calculator->callFunction('compare', $stack);
+        $result = $this->calculator->callFunction('compare', $stack);
+        return $result;
     }
 
 }
