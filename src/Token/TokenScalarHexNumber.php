@@ -11,23 +11,20 @@
 
 namespace avadim\AceCalculator\Token;
 
-use avadim\AceCalculator\Generic\AbstractTokenScalar;
-use avadim\AceCalculator\Generic\AbstractToken;
-
 /**
  * Class TokenScalarNumber
  *
  * @package avadim\AceCalculator
  */
-class TokenScalarHexNumber extends AbstractTokenScalar
+class TokenScalarHexNumber extends TokenScalar
 {
     protected static $matching = self::MATCH_CALLBACK;
 
     /**
-     * @param string           $tokenStr
-     * @param AbstractToken[] $prevTokens
-     * @param array           $allLexemes
-     * @param int             $lexemeNum
+     * @param string    $tokenStr
+     * @param array     $prevTokens
+     * @param array     $allLexemes
+     * @param int       $lexemeNum
      *
      * @return bool
      */
@@ -37,11 +34,19 @@ class TokenScalarHexNumber extends AbstractTokenScalar
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getValue()
     {
         return hexdec(substr($this->value, 2));
+    }
+
+    /**
+     * @return int
+     */
+    public function getValueNum()
+    {
+        return $this->getValue();
     }
 
 }

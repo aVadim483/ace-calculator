@@ -59,7 +59,7 @@ class TokenOperatorDivide extends AbstractTokenOperator
         if ((float)$op2->getValue() === 0.0) {
             throw new \DivisionByZeroError('Divide a number by zero');
         }
-        $result = $op1->getValue() / $op2->getValue();
+        $result = $op1->getValueNum() / $op2->getValueNum();
 
         return new TokenScalarNumber($result);
     }

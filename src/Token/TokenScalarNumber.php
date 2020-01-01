@@ -11,15 +11,12 @@
 
 namespace avadim\AceCalculator\Token;
 
-use avadim\AceCalculator\Generic\AbstractTokenScalar;
-use avadim\AceCalculator\Generic\AbstractToken;
-
 /**
  * Class TokenScalarNumber
  *
  * @package avadim\AceCalculator
  */
-class TokenScalarNumber extends AbstractTokenScalar
+class TokenScalarNumber extends TokenScalar
 {
     protected static $matching = self::MATCH_NUMERIC;
 

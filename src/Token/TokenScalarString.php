@@ -11,14 +11,12 @@
 
 namespace avadim\AceCalculator\Token;
 
-use avadim\AceCalculator\Generic\AbstractTokenScalar;
-
 /**
  * Class TokenScalarString
  *
  * @package avadim\AceCalculator
  */
-class TokenScalarString extends AbstractTokenScalar
+class TokenScalarString extends TokenScalar
 {
     protected static $pattern = '/^\"[^\"]*\"$/';
     protected static $matching = self::MATCH_REGEX;

@@ -12,12 +12,11 @@
 namespace avadim\AceCalculator;
 
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
-use avadim\AceCalculator\Generic\AbstractTokenScalar;
 
 use avadim\AceCalculator\Token\TokenFunction;
 use avadim\AceCalculator\Token\TokenIdentifier;
 use avadim\AceCalculator\Token\TokenLeftBracket;
-use avadim\AceCalculator\Token\TokenScalarNumber;
+use avadim\AceCalculator\Token\TokenScalar;
 use avadim\AceCalculator\Token\TokenVariable;
 
 use avadim\AceCalculator\Exception\CalcException;
@@ -45,6 +44,7 @@ class Processor
      */
     public function __construct($container = null)
     {
+        $this->logEnable(true);
         $this->setContainer($container);
     }
 
@@ -81,10 +81,19 @@ class Processor
     }
 
     /**
+     * @param bool $beautify
+     *
      * @return array
      */
-    public function getLog()
+    public function getLog($beautify = false)
     {
+        if ($beautify) {
+            $result = [];
+            foreach($this->log as $item) {
+                $result[] = $item[0] . ' ( ' . implode(', ', $item[1]) . ') => ' . $item[2];
+            }
+            return $result;
+        }
         return $this->log;
     }
 
@@ -93,13 +102,12 @@ class Processor
      * @param array $stack
      * @param bool $return
      *
-     * @return AbstractTokenScalar
+     * @return TokenScalar
      *
      * @throws CalcException
      */
     protected function executeToken($token, &$stack, $return = false)
     {
-        $token->setCalculator($this);
         $oldStack = $stack;
         if (method_exists($token, 'execute')) {
             $result = $token->execute($stack);
@@ -116,7 +124,11 @@ class Processor
                 if (isset($stack[$i]) && $stack[$i] === $oldStack[$i]) {
                     continue;
                 }
-                $args[] = $oldStack[$i]->getValue();
+                if (is_scalar($oldStack[$i])) {
+                    $args[] = $oldStack[$i];
+                } else {
+                    $args[] = $oldStack[$i]->getValue();
+                }
             }
             $tokenStr = (string)$token->getValue();
             $this->log[] = [$tokenStr, $args, $result->getValue()];
@@ -138,6 +150,12 @@ class Processor
     public function calculate($tokens, array $variables = [], array $identifiers = [])
     {
         $stack = [];
+        /*
+        $tokensArray = [];
+        foreach ($tokens as $token) {
+            $tokensArray[] = is_scalar($token) ? $token : $token->getValue();
+        }
+        */
         foreach ($tokens as $token) {
             if ($token instanceof TokenFunction) {
                 $this->executeToken($token, $stack);
@@ -148,7 +166,7 @@ class Processor
                 $this->executeToken($token, $stack);
             } elseif ($token instanceof TokenLeftBracket) {
                 $stack[] = $token;
-            } elseif ($token instanceof AbstractTokenScalar) {
+            } elseif ($token instanceof TokenScalar) {
                 $stack[] = $token;
             } elseif ($token instanceof TokenIdentifier) {
                 $identifier = $token->getValue();
@@ -185,7 +203,7 @@ class Processor
      * @param $name
      * @param $stack
      *
-     * @return AbstractTokenScalar
+     * @return TokenScalar
      *
      * @throws Exception\LexerException
      * @throws CalcException

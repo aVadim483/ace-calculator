@@ -12,14 +12,14 @@
 namespace avadim\AceCalculator\Extension\Colors;
 
 use avadim\AceCalculator\Generic\AbstractToken;
-use avadim\AceCalculator\Generic\AbstractTokenScalar;
+use avadim\AceCalculator\Token\TokenScalar;
 
 /**
  * Class TokenScalarString
  *
  * @package avadim\AceCalculator
  */
-class TokenScalarHexString extends AbstractTokenScalar
+class TokenScalarHexString extends TokenScalar
 {
     protected static $pattern = '/^\#[0-9a-f]+$/i';
     protected static $matching = self::MATCH_CALLBACK;

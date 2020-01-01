@@ -54,7 +54,7 @@ class TokenOperatorMultiply extends AbstractTokenOperator
         }
         $op2 = array_pop($stack);
         $op1 = array_pop($stack);
-        $result = $op1->getValue() * $op2->getValue();
+        $result = $op1->getValueNum() * $op2->getValueNum();
 
         return new TokenScalarNumber($result);
     }

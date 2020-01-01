@@ -162,3 +162,20 @@ $calculator->setIdentifiers([
 
 $calculator->execute('YEAR + ONE');
 ```
+## Non-numeric values
+
+Non-numeric values will cause warnings in arithmetic operations. 
+But you can set a special option to avoid this. 
+
+```php
+$calculator = new avadim\AceCalculator\AceCalculator();
+
+// calc expression with variable
+$calculator->setVar('x', null);
+// There will be a warning in the next line
+$calculator->execute('$x * 12');
+
+$calculator->setOption('non_numeric', true);
+// And now there will be no warning
+$calculator->execute('$x * 12');
+```

@@ -74,14 +74,14 @@ class TokenOperatorPlus extends AbstractTokenOperator
                 throw new CalcException('Operator "plus" error', CalcException::CALC_ERROR_OPERATOR);
             }
             $op = array_pop($stack);
-            $result = $op->getValue();
+            $result = $op->getValueNum();
         } else {
             if (count($stack) < 2) {
                 throw new CalcException('Operator "plus" error', CalcException::CALC_ERROR_OPERATOR);
             }
             $op2 = array_pop($stack);
             $op1 = array_pop($stack);
-            $result = $op1->getValue() + $op2->getValue();
+            $result = $op1->getValueNum() + $op2->getValueNum();
         }
 
         return new TokenScalarNumber($result);

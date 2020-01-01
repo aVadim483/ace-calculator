@@ -12,7 +12,6 @@
 namespace avadim\AceCalculator;
 
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
-use avadim\AceCalculator\Generic\AbstractTokenScalar;
 
 use avadim\AceCalculator\Token\TokenComma;
 use avadim\AceCalculator\Token\TokenFunction;
@@ -20,6 +19,7 @@ use avadim\AceCalculator\Token\TokenIdentifier;
 use avadim\AceCalculator\Token\TokenLeftBracket;
 use avadim\AceCalculator\Token\TokenRightBracket;
 use avadim\AceCalculator\Token\TokenVariable;
+use avadim\AceCalculator\Token\TokenScalar;
 
 use avadim\AceCalculator\Exception\LexerException;
 
@@ -138,7 +138,7 @@ class Lexer
         $lexemeCnt = count($lexemes);
         while ($lexemeNum < $lexemeCnt) {
             if ($lexemes[$lexemeNum] !== ' ') {
-                $tokensStream[] = $tokenFactory->createToken($lexemes[$lexemeNum], $tokensStream, $lexemes, $lexemeNum);
+                $tokensStream[] = $tokenFactory->createToken($lexemes, $lexemeNum, $tokensStream);
             }
             ++$lexemeNum;
         }
@@ -147,7 +147,7 @@ class Lexer
             $tokensStream[] = $tokenFactory->createToken($lexemeStr, $tokensStream, $lexemes, $lexemeNum);
         }
         */
-        // convert identifiers to functions
+        // set calculator and convert identifiers to functions
         foreach ($tokensStream as $num => $token) {
             if ($token instanceof TokenIdentifier && isset($tokensStream[$num + 1]) && $tokensStream[$num + 1] instanceof TokenLeftBracket) {
                 $tokensStream[$num] = $tokenFactory->createFunction($token->getLexeme());
@@ -192,7 +192,7 @@ class Lexer
             if ($token instanceof TokenFunction) {
                 $stack[] = $token;
                 ++$function;
-            } elseif ($token instanceof AbstractTokenScalar || $token instanceof TokenVariable || $token instanceof TokenIdentifier) {
+            } elseif ($token instanceof TokenScalar || $token instanceof TokenVariable || $token instanceof TokenIdentifier) {
                 $output[] = $token;
             } elseif ($token instanceof TokenLeftBracket) {
                 $stack[] = $token;

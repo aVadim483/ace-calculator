@@ -11,7 +11,6 @@
 
 namespace avadim\AceCalculator\Token;
 
-use avadim\AceCalculator\Generic\AbstractTokenScalar;
 use avadim\AceCalculator\Exception\CalcException;
 
 /**
@@ -24,7 +23,7 @@ class TokenFunction extends TokenIdentifier
     /**
      * @param array $stack
      *
-     * @return AbstractTokenScalar
+     * @return TokenScalar
      *
      * @throws CalcException
      */
@@ -35,7 +34,7 @@ class TokenFunction extends TokenIdentifier
         list($name, $numArguments, $callback, $variableArguments) = $this->options;
         for ($i = 0; $i < $numArguments; $i++) {
             $token = $stack ? array_pop($stack) : null;
-            if ($token instanceof AbstractTokenScalar || $token instanceof TokenIdentifier) {
+            if ($token instanceof TokenScalar || $token instanceof TokenIdentifier) {
                 $args[] = $token->getValue();
             } elseif (is_scalar($token)) {
                 $args[] = $token;
@@ -47,16 +46,6 @@ class TokenFunction extends TokenIdentifier
             while ($stack && ($token = array_pop($stack)) && !$token instanceof TokenLeftBracket) {
                 $args[] = $token->getValue();
             }
-            /*
-            while ($stack && ($token = array_pop($stack))) {
-                if (!$token instanceof TokenLeftBracket) {
-                    $args[] = $token->getValue();
-                } else {
-                    $stack[] = $token;
-                    break;
-                }
-            }
-            */
         } elseif ($stack) {
             $token = array_pop($stack);
             if (!$token instanceof TokenLeftBracket) {
@@ -65,6 +54,6 @@ class TokenFunction extends TokenIdentifier
         }
         $result = call_user_func_array($callback, array_reverse($args));
 
-        return $this->calculator->getTokenFactory()->createScalarToken($result);
+        return $this->processor->getTokenFactory()->createScalarToken($result);
     }
 }

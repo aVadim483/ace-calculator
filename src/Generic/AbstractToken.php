@@ -47,7 +47,7 @@ abstract class AbstractToken
     protected $options;
 
     /** @var  Processor */
-    protected $calculator;
+    protected $processor;
 
     /**
      * @param string $lexeme
@@ -81,6 +81,34 @@ abstract class AbstractToken
      */
     public function getValue()
     {
+        return $this->value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValueNum()
+    {
+        if (!is_numeric($this->value)) {
+            if (empty($this->options['non_numeric'])) {
+                $caller = debug_backtrace(null, 2);
+                $message = 'A non-numeric value ';
+                if (null === $this->value) {
+                    $message .= 'NULL';
+                } elseif (is_bool($this->value)) {
+                    $message .= $this->value ? 'TRUE' : 'FALSE';
+                } else {
+                    $message .= "'" . $this->value . "'";
+                }
+                if (isset($caller[1]['class'])) {
+                    $message .= ' for ' . $caller[1]['class'];
+                }
+                $message .= ' encountered';
+                trigger_error($message . ')', E_USER_WARNING);
+            } else {
+                return ((int)$this->value == $this->value) ? (int)$this->value : (float)$this->value;
+            }
+        }
         return $this->value;
     }
 
@@ -121,18 +149,18 @@ abstract class AbstractToken
     }
 
     /**
-     * @param Processor $calculator
+     * @param Processor $processor
      */
-    public function setCalculator($calculator)
+    public function setProcessor($processor)
     {
-        $this->calculator = $calculator;
+        $this->processor = $processor;
     }
 
     /**
      * @return Processor
      */
-    public function getCalculator()
+    public function getProcessor()
     {
-        return $this->calculator;
+        return $this->processor;
     }
 }

@@ -14,7 +14,8 @@ namespace avadim\AceCalculator;
 use avadim\AceCalculator\Exception\CalcException;
 use avadim\AceCalculator\Exception\ConfigException;
 use avadim\AceCalculator\Exception\LexerException;
-use avadim\AceCalculator\Generic\AbstractTokenScalar;
+
+use avadim\AceCalculator\Token\TokenScalar;
 
 /**
  * Class AceCalculator
@@ -30,6 +31,9 @@ class AceCalculator
     const IDENTIFIER_AS_STRING      = 1;
     const IDENTIFIER_AS_VARIABLE    = 2;
     const IDENTIFIER_AS_CALLABLE    = 3;
+
+    const NON_NUMERIC_STRICT        = 0;
+    const NON_NUMERIC_IGNORE        = 1;
 
     /**
      * Current config array
@@ -104,6 +108,7 @@ class AceCalculator
     protected function init($config = null)
     {
         $this->container = new Container();
+        $this->container->set('Calculator', $this);
         $this->container->set('TokenFactory', $this->createTokenFactory($this->container));
         $this->container->set('Lexer', $this->createLexer($this->container));
         $this->container->set('Processor', $this->createProcessor($this->container));
@@ -171,7 +176,7 @@ class AceCalculator
     /**
      * @return Processor
      */
-    public function getCalculator()
+    public function getProcessor()
     {
         return $this->container->get('Processor');
     }
@@ -186,6 +191,7 @@ class AceCalculator
                 'var_prefix'        => self::VAR_PREFIX,
                 'result_variable'   => self::RESULT_VARIABLE,
                 'identifier_as'     => self::IDENTIFIER_AUTO,
+                'non_numeric'       => self::NON_NUMERIC_STRICT,
             ],
             'tokens' => [
                 'left_bracket'  => '\avadim\AceCalculator\Token\TokenLeftBracket',
@@ -394,6 +400,15 @@ class AceCalculator
 
     /**
      * @param string $name
+     * @param mixed $value
+     */
+    protected function setConfigOption($name, $value)
+    {
+        $this->config['options'][$name] = $value;
+    }
+
+    /**
+     * @param string $name
      *
      * @return mixed
      */
@@ -406,6 +421,29 @@ class AceCalculator
     }
 
     /**
+     * @param $name
+     * @param $value
+     *
+     * @return $this
+     */
+    public function setOption($name, $value)
+    {
+        $this->setConfigOption($name, $value);
+
+        return $this;
+    }
+
+    /**
+     * @param $name
+     *
+     * @return mixed
+     */
+    public function getOption($name)
+    {
+        return $this->getConfigOption($name);
+    }
+
+    /**
      * Add variable to executor
      *
      * @param  string        $variable
@@ -415,10 +453,8 @@ class AceCalculator
      */
     public function setVar($variable, $value)
     {
-        if ($sVarPrefix = $this->getConfigOption('var_prefix')) {
-            if ($variable[0] !== $sVarPrefix) {
-                $variable = $sVarPrefix . $variable;
-            }
+        if (($sVarPrefix = $this->getConfigOption('var_prefix')) && $variable[0] !== $sVarPrefix) {
+            $variable = $sVarPrefix . $variable;
         }
         $this->variables[$variable] = $value;
 
@@ -500,7 +536,7 @@ class AceCalculator
      * Add identifier to executor
      *
      * @param string $identifier
-     * @param callable|AbstractTokenScalar $value
+     * @param callable|TokenScalar $value
      *
      * @return AceCalculator
      */
@@ -627,9 +663,9 @@ class AceCalculator
         } else {
             $tokensStack = $this->cache[$expression];
         }
-        $calculator = $this->getCalculator();
+        $processor = $this->getProcessor();
         try {
-            $result = $calculator->calculate($tokensStack, $this->variables, $this->identifiers);
+            $result = $processor->calculate($tokensStack, $this->variables, $this->identifiers);
         } catch (CalcException $e) {
             throw new CalcException('Expression calculation error ' . $e->getMessage() . '. Expression: ' . $expression);
         }

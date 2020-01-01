@@ -11,8 +11,8 @@ namespace avadim\AceCalculator\Extension\Bool\Operator;
 
 use avadim\AceCalculator\Generic\AbstractToken;
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
-use avadim\AceCalculator\Generic\AbstractTokenScalar;
-use avadim\AceCalculator\Token\TokenScalarNumber;
+
+use avadim\AceCalculator\Token\TokenScalar;
 
 /**
  * Class TokenOperatorCompare
@@ -40,7 +40,7 @@ class TokenOperatorCompare extends AbstractTokenOperator
     /**
      * @param AbstractToken[] $stack
      *
-     * @return AbstractTokenScalar
+     * @return TokenScalar
      *
      * @throws \avadim\AceCalculator\Exception\CalcException
      * @throws \avadim\AceCalculator\Exception\LexerException
@@ -51,7 +51,7 @@ class TokenOperatorCompare extends AbstractTokenOperator
         $op1 = array_pop($stack);
         $localStack = [$op1, $op2, static::$pattern];
 
-        return $this->calculator->callFunction('compare', $localStack);
+        return $this->processor->callFunction('compare', $localStack);
     }
 
 }

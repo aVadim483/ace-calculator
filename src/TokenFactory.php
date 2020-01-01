@@ -18,6 +18,8 @@ use avadim\AceCalculator\Generic\AbstractTokenOperator;
 
 use avadim\AceCalculator\Exception\ConfigException;
 use avadim\AceCalculator\Exception\LexerException;
+
+use avadim\AceCalculator\Token\TokenScalar;
 use avadim\AceCalculator\Token\TokenScalarNumber;
 use avadim\AceCalculator\Token\TokenScalarString;
 
@@ -131,19 +133,39 @@ class TokenFactory
     }
 
     /**
+     * @param $tokenClass
+     * @param $value
+     * @param $options
+     *
+     * @return AbstractToken
+     */
+    protected function createTokenByClass($tokenClass, $value, $options = [])
+    {
+        $calculator = $this->container->get('Calculator');
+        $processor = $this->container->get('Processor');
+        $options['non_numeric'] = !empty($calculator) ? $calculator->getOption('non_numeric') : null;
+
+        /** @var AbstractToken $token */
+        $token = new $tokenClass($value, $options);
+        $token->setProcessor($processor);
+
+        return $token;
+    }
+
+    /**
      * Create token object
      *
-     * @param string $lexeme        Current lexeme
-     * @param array  $tokensStream  Stream of previous tokens
-     * @param array  $allLexemes    Array of all lexemes
-     * @param int    $lexemeNum     Number of current lexeme in array
+     * @param array         $allLexemes    Array of all lexemes
+     * @param int           $lexemeNum     Number of current lexeme in array
+     * @param array         $tokensStream  Stream of previous tokens
      *
      * @return mixed
      *
      * @throws LexerException
      */
-    public function createToken($lexeme, $tokensStream, $allLexemes, &$lexemeNum)
+    public function createToken($allLexemes, &$lexemeNum, $tokensStream)
     {
+        $lexeme = $allLexemes[$lexemeNum];
         if ($tokensStream) {
             $prevToken = end($tokensStream);
             $beginExpression = ($prevToken instanceof AbstractTokenOperator || $prevToken instanceof AbstractTokenGroup || $prevToken instanceof AbstractTokenDelimiter);
@@ -152,7 +174,9 @@ class TokenFactory
             $beginExpression = true;
         }
 
-        $options = ['begin' => $beginExpression];
+        $options = [
+            'begin' => $beginExpression,
+        ];
         foreach ($this->tokens as $tokenName => $tokenMatching) {
             $tokenClass = $tokenMatching['class'];
             $tokenCallback = $tokenMatching['callback'];
@@ -167,14 +191,14 @@ class TokenFactory
                             $checkLexeme .= $allLexemes[$lexemeNum + $i];
                             if ($tokenClass::$tokenCallback($checkLexeme, $tokensStream, $allLexemes, $lexemeNum)) {
                                 $lexemeNum += $i;
-                                return new $tokenClass($checkLexeme, $options);
+                                return $this->createTokenByClass($tokenClass, $checkLexeme, $options);
                             }
                         }
                     } elseif ($callResult = $tokenClass::$tokenCallback($lexeme, $tokensStream, $allLexemes, $lexemeNum)) {
                         if (is_string($callResult)) {
                             $lexeme = $callResult;
                         }
-                        return new $tokenClass($lexeme, $options);
+                        return $this->createTokenByClass($tokenClass, $lexeme, $options);
                     }
                     break;
                 case AbstractToken::MATCH_REGEX:
@@ -185,22 +209,22 @@ class TokenFactory
                             $checkLexeme .= $allLexemes[$lexemeNum + $i];
                             if (preg_match($tokenMatching['pattern'], $checkLexeme)) {
                                 $lexemeNum += $i;
-                                return new $tokenClass($checkLexeme, $options);
+                                return $this->createTokenByClass($tokenClass, $checkLexeme, $options);
                             }
                         }
                     } elseif (preg_match($tokenMatching['pattern'], $lexeme)) {
-                        return new $tokenClass($lexeme, $options);
+                        return $this->createTokenByClass($tokenClass, $lexeme, $options);
                     }
                     break;
                 case AbstractToken::MATCH_NUMERIC:
                     if (is_numeric($lexeme)) {
-                        return new $tokenClass($lexeme, $options);
+                        return $this->createTokenByClass($tokenClass, $lexeme, $options);
                     }
                     break;
                 case AbstractToken::MATCH_STRING:
                 default:
                     if ($tokenMatching['pattern'] === $lexeme) {
-                        return new $tokenClass($lexeme, $options);
+                        return $this->createTokenByClass($tokenClass, $lexeme, $options);
                     }
             }
         }
@@ -210,11 +234,18 @@ class TokenFactory
     /**
      * @param $value
      *
-     * @return TokenScalarNumber|TokenScalarString
+     * @return mixed
      */
     public function createScalarToken($value)
     {
-        return is_numeric($value) ? new TokenScalarNumber($value) : new TokenScalarString($value);
+        if (null === $value) {
+            $tokenClass = TokenScalar::class;
+        } elseif (is_numeric($value)) {
+            $tokenClass = TokenScalarNumber::class;
+        } else {
+            $tokenClass = TokenScalarString::class;
+        }
+        return $this->createTokenByClass($tokenClass, $value);
     }
 
     /**
@@ -231,7 +262,7 @@ class TokenFactory
         if (isset($this->functions[$name], $this->tokens['function']['class'])) {
             $tokenClass = $this->tokens['function']['class'];
             $tokenOptions = isset($this->functions[$name]) ? $this->functions[$name] : [];
-            return new $tokenClass($name, $tokenOptions);
+            return $this->createTokenByClass($tokenClass, $name, $tokenOptions);
         }
         throw new LexerException('Unknown function "' . $name . '"', LexerException::LEXER_UNKNOWN_FUNCTION);
     }
