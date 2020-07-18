@@ -7,6 +7,8 @@
  * file that was distributed with this source code
  */
 
+error_reporting(E_ALL);
+
 function source($file)
 {
     $source = file_get_contents($file);
@@ -24,7 +26,7 @@ if (isset($_GET['demo']) && preg_match('/^[\w\-]+$/', $_GET['demo'])) {
 
 echo '
     <a href="?demo=simple">Base usage</a>
-    <a href="?demo=operator">Custom operator</a>
+    <a href="?demo=operator">Custom operator & function</a>
     <a href="?demo=extension-bool">Extension usage</a>
     <a href="?demo=extension-colors">Extension "Colors" usage</a>
     <a href="?demo=extension-colors-hexa">Extension "ColorsHexa" usage</a>

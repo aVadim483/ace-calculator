@@ -46,7 +46,12 @@ class TokenOperatorModulus extends AbstractTokenOperator
 
 $calculator = new avadim\AceCalculator\AceCalculator();
 $calculator->addOperator('mod', '\TokenOperatorModulus');
+$calculator->addFunction('strlen', static function($val) {
+    return strlen($val);
+});
 
-$result = $calculator->execute('286 mod 100');
+$result1 = $calculator->execute('286 mod 100');
+$result2 = $calculator->execute('strlen("qwerty")');
 
-echo "result: $result\n";
+echo "result1: $result1\n";
+echo "result2: $result2\n";

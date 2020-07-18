@@ -179,3 +179,7 @@ $calculator->setOption('non_numeric', true);
 // And now there will be no warning
 $calculator->execute('$x * 12');
 ```
+
+## Support AceCalculator
+
+if you find this package useful you can support and donate to me https://www.paypal.me/VShemarov

@@ -828,7 +828,7 @@ class AceColors
     public function isLight($color = false, $lighterThan = 130)
     {
         // Get current color
-        $color = ($color) ? $color : $this->_hex;
+        $color = ($color) ?: $this->_hex;
 
         // Calculate straight from rbg
         $r = hexdec($color[0] . $color[1]);
@@ -850,7 +850,7 @@ class AceColors
     public function isDark($color = false, $darkerThan = 130)
     {
         // Get current color
-        $color = ($color) ? $color : $this->_hex;
+        $color = ($color) ?: $this->_hex;
 
         // Calculate straight from rbg
         $r = hexdec($color[0] . $color[1]);
@@ -1075,7 +1075,7 @@ class AceColors
             $hsl['l'] = ($hsl['l'] < 0) ? 0 : $hsl['l'] / 100;
         } else {
             // We need to find out how much to darken
-            $hsl['l'] = $hsl['l'] / 2;
+            $hsl['l'] /= 2;
         }
 
         return $hsl;

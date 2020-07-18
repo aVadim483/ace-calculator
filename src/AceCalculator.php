@@ -653,21 +653,35 @@ class AceCalculator
      */
     public function calc($expression, $resultVariable = null)
     {
-        if (!$this->cacheEnable || !isset($this->cache[$expression])) {
-            $lexer = $this->getLexer();
-            $tokensStream = $lexer->stringToTokensStream($expression);
-            $tokensStack = $lexer->buildReversePolishNotation($tokensStream);
-            if ($this->cacheEnable) {
-                $this->cache[$expression] = $tokensStack;
-            }
-        } else {
-            $tokensStack = $this->cache[$expression];
+        if (!is_scalar($expression)) {
+            throw new CalcException('Evaluated expression is not a string', CalcException::CALC_INCORRECT_EXPRESSION);
         }
-        $processor = $this->getProcessor();
-        try {
-            $result = $processor->calculate($tokensStack, $this->variables, $this->identifiers);
-        } catch (CalcException $e) {
-            throw new CalcException('Expression calculation error ' . $e->getMessage() . '. Expression: ' . $expression);
+        if ($expression === null || $expression === '') {
+            throw new CalcException('Expression is empty', CalcException::CALC_INCORRECT_EXPRESSION);
+        }
+        if (preg_match('/^d+$/', $expression)) {
+            $result = (int)$expression;
+        } elseif (is_numeric($expression)) {
+            $result = (float)$expression;
+        } elseif (!is_string($expression)) {
+            throw new CalcException('Evaluated expression is not a string', CalcException::CALC_INCORRECT_EXPRESSION);
+        } else {
+            if (!$this->cacheEnable || !isset($this->cache[$expression])) {
+                $lexer = $this->getLexer();
+                $tokensStream = $lexer->stringToTokensStream($expression);
+                $tokensStack = $lexer->buildReversePolishNotation($tokensStream);
+                if ($this->cacheEnable) {
+                    $this->cache[$expression] = $tokensStack;
+                }
+            } else {
+                $tokensStack = $this->cache[$expression];
+            }
+            $processor = $this->getProcessor();
+            try {
+                $result = $processor->calculate($tokensStack, $this->variables, $this->identifiers);
+            } catch (CalcException $e) {
+                throw new CalcException('Expression calculation error ' . $e->getMessage() . '. Expression: ' . $expression);
+            }
         }
 
         $totalResultVar = $this->getConfigOption('result_variable');
