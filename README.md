@@ -1,9 +1,9 @@
-# AceCalculator - flexible universal calculator
-
-Based on NeonXP/MathExecutor (https://github.com/NeonXP/MathExecutor)
+# AceCalculator - flexible universal calculator in PHP
 
 You can calculate classical mathematical expressions with variables, 
 or you can specify your own calculation rules, operators or custom functions
+
+Based on NeonXP/MathExecutor (https://github.com/NeonXP/MathExecutor), but advanced and improved.
 
 ## Install via Composer
 
@@ -35,16 +35,18 @@ print $calculator
 Default operators: `+ - * / ^`
 
 Default functions:
-* min
-* max
-* avg
-* sqrt
-* sin
-* cos
-* tn
-* asin
-* acos
-* atn
+* min()
+* max()
+* avg()
+* sqrt()
+* sin()
+* cos()
+* tn()
+* asin()
+* acos()
+* atn()
+* degrees()
+* radians()
 
 ## Variables
 
