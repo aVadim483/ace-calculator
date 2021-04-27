@@ -133,6 +133,14 @@ class TokenFactory
     }
 
     /**
+     * @return array
+     */
+    public function getFunctionList()
+    {
+        return $this->functions;
+    }
+
+    /**
      * @param $tokenClass
      * @param $value
      * @param $options

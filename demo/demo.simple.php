@@ -8,7 +8,7 @@ $calculator = new avadim\AceCalculator\AceCalculator();
 $result1 = $calculator->execute('1 + 2 * (2 - (4+10))^2 + sin(10)+0');
 
 // calc expression with variable
-$calculator->setVar('x', 100);
+$calculator->setVar('$x', 100);
 $result2 = $calculator->execute('min(1,-sin($x),cos($x)-0.5)');
 
 // cascade calculation

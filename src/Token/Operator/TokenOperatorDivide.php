@@ -12,6 +12,7 @@
 namespace avadim\AceCalculator\Token\Operator;
 
 use avadim\AceCalculator\Exception\CalcException;
+use avadim\AceCalculator\Exception\DivisionByZeroException;
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
 use avadim\AceCalculator\Generic\AbstractToken;
 use avadim\AceCalculator\Token\TokenScalarNumber;
@@ -46,7 +47,7 @@ class TokenOperatorDivide extends AbstractTokenOperator
      *
      * @return TokenScalarNumber
      *
-     * @throws \DivisionByZeroError
+     * @throws DivisionByZeroException
      * @throws CalcException
      */
     public function execute(&$stack)
@@ -57,7 +58,7 @@ class TokenOperatorDivide extends AbstractTokenOperator
         $op2 = array_pop($stack);
         $op1 = array_pop($stack);
         if ((float)$op2->getValue() === 0.0) {
-            throw new \DivisionByZeroError('Divide a number by zero');
+            throw new DivisionByZeroException('Divide a number by zero');
         }
         $result = $op1->getValueNum() / $op2->getValueNum();
 

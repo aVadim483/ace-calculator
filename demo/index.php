@@ -25,6 +25,7 @@ if (isset($_GET['demo']) && preg_match('/^[\w\-]+$/', $_GET['demo'])) {
 }
 
 echo '
+    <a href="?demo=interactive">Interactive form</a>
     <a href="?demo=simple">Base usage</a>
     <a href="?demo=operator">Custom operator & function</a>
     <a href="?demo=extension-bool">Extension usage</a>
@@ -36,5 +37,9 @@ $file = __DIR__ . '/demo.' . $demo . '.php';
 if (!is_file($file)) {
     echo 'Demo file "demo.' . $demo . '.php" not found';
 } else {
-    source(__DIR__ . '/demo.' . $demo . '.php');
+    if ($demo === 'interactive') {
+        include $file;
+    } else {
+        source(__DIR__ . '/demo.' . $demo . '.php');
+    }
 }

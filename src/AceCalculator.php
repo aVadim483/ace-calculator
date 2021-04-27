@@ -212,10 +212,17 @@ class AceCalculator
                 'power'         => '\avadim\AceCalculator\Token\Operator\TokenOperatorPower',
             ],
             'functions' => [
+                // name => [callback, minArguments, variableArguments]
                 'min'   => ['min', 2, true],
                 'max'   => ['max', 2, true],
                 'avg'   => [static function() { return array_sum(func_get_args()) / func_num_args(); }, 2, true],
                 'sqrt'  => 'sqrt',
+                'log'   => 'log',
+                'log10' => 'log10',
+                'exp'   => 'exp',
+                'floor' => 'floor',
+                'ceil'  => 'ceil',
+                'round' => ['round', 1, true],
                 'sin'   => 'sin',
                 'cos'   => 'cos',
                 'tn'    => 'tan',
@@ -646,6 +653,20 @@ class AceCalculator
     }
 
     /**
+     * @return string[]
+     */
+    public function getFunctionList()
+    {
+        $list = $this->getTokenFactory()->getFunctionList();
+        if ($list) {
+            $result = array_keys($list);
+            sort($result);
+            return $result;
+        }
+        return [];
+    }
+
+    /**
      * Execute expression
      *
      * @param string $expression
@@ -658,11 +679,11 @@ class AceCalculator
      */
     public function calc($expression, $resultVariable = null)
     {
-        if (!is_scalar($expression)) {
-            throw new CalcException('Evaluated expression is not a string', CalcException::CALC_INCORRECT_EXPRESSION);
-        }
         if ($expression === null || $expression === '') {
             throw new CalcException('Expression is empty', CalcException::CALC_INCORRECT_EXPRESSION);
+        }
+        if (!is_scalar($expression)) {
+            throw new CalcException('Evaluated expression is not a string', CalcException::CALC_INCORRECT_EXPRESSION);
         }
         if (preg_match('/^d+$/', $expression)) {
             $result = (int)$expression;
@@ -685,7 +706,10 @@ class AceCalculator
             try {
                 $result = $processor->calculate($tokensStack, $this->variables, $this->identifiers);
             } catch (CalcException $e) {
-                throw new CalcException('Expression calculation error ' . $e->getMessage() . '. Expression: ' . $expression);
+                $exception = new CalcException('Expression calculation error: ' . $e->getMessage() . '. Expression: ' . $expression);
+                $exception->setErrorMessage($e->getMessage());
+                $exception->setErrorExpression($expression);
+                throw $exception;
             }
         }
 

@@ -18,4 +18,27 @@ namespace avadim\AceCalculator\Exception;
  */
 class CalcException extends AceCalculatorException
 {
+    protected $errorMessage;
+
+    protected $errorExpression;
+
+    public function setErrorMessage($message)
+    {
+        $this->errorMessage = $message;
+    }
+
+    public function setErrorExpression($expression)
+    {
+        $this->errorExpression = $expression;
+    }
+
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
+    public function getErrorExpression()
+    {
+        return $this->errorExpression;
+    }
 }
