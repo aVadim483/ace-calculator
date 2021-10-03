@@ -11,6 +11,7 @@
 
 namespace avadim\AceCalculator\Generic;
 
+use avadim\AceCalculator\Container;
 use avadim\AceCalculator\Processor;
 
 /**
@@ -45,6 +46,9 @@ abstract class AbstractToken
 
     /** @var array  */
     protected $options;
+
+    /** @var  Container */
+    protected $container;
 
     /** @var  Processor */
     protected $processor;
@@ -113,6 +117,14 @@ abstract class AbstractToken
     }
 
     /**
+     * @return mixed
+     */
+    public function getOption($name)
+    {
+        return isset($this->options[$name]) ? $this->options[$name] : null;
+    }
+
+    /**
      * @return array
      */
     public function getOptions()
@@ -153,7 +165,9 @@ abstract class AbstractToken
      */
     public function setProcessor($processor)
     {
-        $this->processor = $processor;
+        $this->container->set('Processor', $processor);
+
+        return $this;
     }
 
     /**
@@ -161,6 +175,25 @@ abstract class AbstractToken
      */
     public function getProcessor()
     {
-        return $this->processor;
+        return $this->container->get('Processor');
     }
+
+    /**
+     * @param Container $container
+     */
+    public function setContainer($container)
+    {
+        $this->container = $container;
+
+        return $this;
+    }
+
+    /**
+     * @return Container
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
 }

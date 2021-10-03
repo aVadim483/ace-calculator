@@ -10,13 +10,14 @@ class TokenOperatorModulus extends AbstractTokenOperator
 {
     protected static $pattern = 'mod';
 
+    protected $priority = self::MATH_PRIORITY_POWER;
+
     /**
-     * Priority of this operator (1 equals "+" or "-", 2 equals "*" or "/", 3 equals "^")
      * @return int
      */
     public function getPriority()
     {
-        return 3;
+        return $this->priority;
     }
 
     /**

@@ -22,21 +22,33 @@ class CalcException extends AceCalculatorException
 
     protected $errorExpression;
 
+    /**
+     * @param $message
+     */
     public function setErrorMessage($message)
     {
         $this->errorMessage = $message;
     }
 
+    /**
+     * @param $expression
+     */
     public function setErrorExpression($expression)
     {
         $this->errorExpression = $expression;
     }
 
+    /**
+     * @return mixed
+     */
     public function getErrorMessage()
     {
         return $this->errorMessage;
     }
 
+    /**
+     * @return mixed
+     */
     public function getErrorExpression()
     {
         return $this->errorExpression;

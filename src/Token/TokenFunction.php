@@ -56,6 +56,6 @@ class TokenFunction extends TokenIdentifier
         }
         $result = call_user_func_array($callback, array_reverse($args));
 
-        return $this->processor->getTokenFactory()->createScalarToken($result);
+        return $this->getProcessor()->getTokenFactory()->createScalarToken($result);
     }
 }

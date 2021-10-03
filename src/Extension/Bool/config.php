@@ -25,5 +25,6 @@ return [
     'functions' => [
         'compare'   => ['\avadim\AceCalculator\Extension\Bool\compare', 2, true],
         'if'        => ['\avadim\AceCalculator\Extension\Bool\if_then', 3],
+        'not'       => ['\avadim\AceCalculator\Extension\Bool\not'],
     ],
 ];

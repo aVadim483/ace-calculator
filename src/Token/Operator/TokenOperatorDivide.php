@@ -26,12 +26,14 @@ class TokenOperatorDivide extends AbstractTokenOperator
 {
     protected static $pattern = '/';
 
+    protected $priority = self::MATH_PRIORITY_DIVIDE;
+
     /**
      * @return int
      */
     public function getPriority()
     {
-        return 2;
+        return $this->priority;
     }
 
     /**

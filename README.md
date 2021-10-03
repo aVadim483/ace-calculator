@@ -71,7 +71,17 @@ $calculator->setVars([
     'var2' => 0.22
 ]);
 
+// calculation with variables
 $calculator->execute('$var1 + $var2');
+
+// calculate and assign result to $var3
+$calculator->execute('$var1 + $var2', '$var3');
+
+// assign values to variable in expression
+$calculator
+    ->calc('$var3 = ($var1 + $var2)')
+    ->calc('$var3 * 20')
+    ->result();
 ```
 
 ## Extra operators and functions

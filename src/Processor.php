@@ -98,7 +98,7 @@ class Processor
     }
 
     /**
-     * @param TokenFunction $token
+     * @param TokenFunction|TokenIdentifier|AbstractTokenOperator $token
      * @param array $stack
      * @param bool $return
      *
@@ -184,11 +184,15 @@ class Processor
                 $stack[] = $token;
             } elseif ($token instanceof TokenVariable) {
                 $variable = $token->getValue();
-                if (!$variables || !array_key_exists($variable, $variables)) {
-                    throw new CalcException('Unknown variable "' . $variable . '"', CalcException::CALC_UNKNOWN_VARIABLE);
+                if ($token->assignVariable) {
+                    $stack[] = $variable;
+                } else {
+                    if (!$variables || !array_key_exists($variable, $variables)) {
+                        throw new CalcException('Unknown variable "' . $variable . '"', CalcException::CALC_UNKNOWN_VARIABLE);
+                    }
+                    $value = $variables[$variable];
+                    $stack[] = $this->getTokenFactory()->createScalarToken($value);
                 }
-                $value = $variables[$variable];
-                $stack[] = $this->getTokenFactory()->createScalarToken($value);
             }
         }
         $result = array_pop($stack);

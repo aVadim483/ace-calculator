@@ -19,29 +19,60 @@ function source($file)
     include $file;
 }
 
-if (isset($_GET['demo']) && preg_match('/^[\w\-]+$/', $_GET['demo'])) {
-    $demo = $_GET['demo'];
-} else {
-    $demo = 'simple';
-}
+$menu = [
+    ['label' => 'Interactive form', 'href' => '?demo=interactive'],
+    ['label' => 'Base usage', 'href' => '?demo=simple'],
+    ['label' => 'Variables', 'href' => '?demo=variables'],
+    ['label' => 'Custom functions', 'href' => '?demo=functions'],
+    ['label' => 'Custom operators', 'href' => '?demo=operator'],
+    ['label' => 'Extension usage', 'href' => '?demo=extension-bool'],
+    ['label' => 'Extension "Colors" usage', 'href' => '?demo=extension-colors'],
+    ['label' => 'Extension "ColorsHexa" usage', 'href' => '?demo=extension-colors-hexa'],
+];
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AceCalculator Demo</title>
+    <style>
+        td {vertical-align: top;}
+    </style>
+</head>
+<body>
+<table>
+    <tr>
+        <td>
+            <ul style="padding-right: 10px; margin-right: 10px; border-right: 1px solid #555555;">
+                <?php
+                foreach ($menu as $item) {
+                    echo '<li><a href="' . $item['href'] . '">' . $item['label'] . '</a></li>';
+                }
+                ?>
+            </ul>
+        </td>
+        <td>
+            <?php
+            if (isset($_GET['demo']) && preg_match('/^[\w\-]+$/', $_GET['demo'])) {
+                $demo = $_GET['demo'];
+            } else {
+                $demo = 'simple';
+            }
 
-echo '
-    <a href="?demo=interactive">Interactive form</a>
-    <a href="?demo=simple">Base usage</a>
-    <a href="?demo=functions">Custom functions</a>
-    <a href="?demo=operator">Custom operators</a>
-    <a href="?demo=extension-bool">Extension usage</a>
-    <a href="?demo=extension-colors">Extension "Colors" usage</a>
-    <a href="?demo=extension-colors-hexa">Extension "ColorsHexa" usage</a>
-';
-
-$file = __DIR__ . '/demo.' . $demo . '.php';
-if (!is_file($file)) {
-    echo 'Demo file "demo.' . $demo . '.php" not found';
-} else {
-    if ($demo === 'interactive') {
-        include $file;
-    } else {
-        source(__DIR__ . '/demo.' . $demo . '.php');
-    }
-}
+            $file = __DIR__ . '/demo.' . $demo . '.php';
+            if (!is_file($file)) {
+                echo 'Demo file "demo.' . $demo . '.php" not found';
+            } else {
+                if ($demo === 'interactive') {
+                    include $file;
+                } else {
+                    ini_set("highlight.comment", "#777777");
+                    source(__DIR__ . '/demo.' . $demo . '.php');
+                }
+            }
+            ?>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

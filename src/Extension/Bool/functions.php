@@ -74,3 +74,13 @@ function if_then($cond, $val1, $val2)
     }
     return $val2;
 }
+
+/**
+ * @param mixed $val
+ *
+ * @return int
+ */
+function not($val)
+{
+    return (!$val) ? 1 : 0;
+}

@@ -150,12 +150,11 @@ class TokenFactory
     protected function createTokenByClass($tokenClass, $value, $options = [])
     {
         $calculator = $this->container->get('Calculator');
-        $processor = $this->container->get('Processor');
         $options['non_numeric'] = !empty($calculator) ? $calculator->getOption('non_numeric') : null;
 
         /** @var AbstractToken $token */
         $token = new $tokenClass($value, $options);
-        $token->setProcessor($processor);
+        $token->setContainer($this->container);
 
         return $token;
     }

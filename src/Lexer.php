@@ -13,6 +13,7 @@ namespace avadim\AceCalculator;
 
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
 
+use avadim\AceCalculator\Token\Operator\TokenOperatorAssign;
 use avadim\AceCalculator\Token\TokenComma;
 use avadim\AceCalculator\Token\TokenFunction;
 use avadim\AceCalculator\Token\TokenIdentifier;
@@ -147,10 +148,14 @@ class Lexer
             $tokensStream[] = $tokenFactory->createToken($lexemeStr, $tokensStream, $lexemes, $lexemeNum);
         }
         */
-        // set calculator and convert identifiers to functions
         foreach ($tokensStream as $num => $token) {
+            // convert identifiers to functions
             if ($token instanceof TokenIdentifier && isset($tokensStream[$num + 1]) && $tokensStream[$num + 1] instanceof TokenLeftBracket) {
                 $tokensStream[$num] = $tokenFactory->createFunction($token->getLexeme());
+            }
+            // check assign operator
+            if ($token instanceof TokenOperatorAssign && isset($tokensStream[$num - 1]) && $tokensStream[$num - 1] instanceof TokenVariable) {
+                //$tokensStream[$num] = $tokenFactory->createFunction($token->getLexeme());
             }
         }
         return $tokensStream;
@@ -217,6 +222,15 @@ class Lexer
                 }
                 if ($function > $level) {
                     --$function;
+                }
+            } elseif ($token instanceof TokenOperatorAssign) {
+                if (count($output) > 0 && ($prevToken = array_pop($output)) && ($prevToken instanceof TokenVariable) && $prevToken->getOption('begin')) {
+                    // assign to variable
+                    $prevToken->assignVariable = true;
+                    $stack[] = $token;
+                    $stack[] = $prevToken;
+                } else {
+                    throw new LexerException('Variable expected before "="', LexerException::LEXER_ERROR);
                 }
             } elseif ($token instanceof AbstractTokenOperator) {
                 while (($count = count($stack)) > 0 && $token->lowPriority($stack[$count-1])) {

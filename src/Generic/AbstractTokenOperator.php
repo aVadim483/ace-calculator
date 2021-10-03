@@ -21,6 +21,14 @@ abstract class AbstractTokenOperator extends AbstractToken
     const RIGHT_ASSOC   = 'RIGHT';
     const LEFT_ASSOC    = 'LEFT';
 
+    const MATH_PRIORITY_UNARY       = 4;
+    const MATH_PRIORITY_POWER       = 3;
+    const MATH_PRIORITY_MULTIPLY    = 2;
+    const MATH_PRIORITY_DIVIDE      = 2;
+    const MATH_PRIORITY_PLUS        = 1;
+    const MATH_PRIORITY_MINUS       = 1;
+    const MATH_PRIORITY_ASSIGN      = -5;
+
     /**
      * @return int
      */

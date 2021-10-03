@@ -18,6 +18,6 @@ class TokenOperatorAnd extends TokenOperatorCompare
 {
     protected static $pattern = '&&';
 
-    protected $priority = -1;
+    protected $priority = self::MATH_PRIORITY_AND;
 
 }

@@ -14,25 +14,24 @@ namespace avadim\AceCalculator\Token\Operator;
 use avadim\AceCalculator\Exception\CalcException;
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
 use avadim\AceCalculator\Generic\AbstractToken;
+use avadim\AceCalculator\Token\TokenScalar;
 use avadim\AceCalculator\Token\TokenScalarNumber;
 
 /**
- * Class TokenOperatorMultiply
+ * Class TokenOperatorPower
  *
  * @package avadim\AceCalculator
  */
-class TokenOperatorMultiply extends AbstractTokenOperator
+class TokenOperatorAssign extends AbstractTokenOperator
 {
-    protected static $pattern = '*';
-
-    protected $priority = self::MATH_PRIORITY_MULTIPLY;
+    protected static $pattern = '=';
 
     /**
      * @return int
      */
     public function getPriority()
     {
-        return $this->priority;
+        return self::MATH_PRIORITY_ASSIGN;
     }
 
     /**
@@ -43,21 +42,26 @@ class TokenOperatorMultiply extends AbstractTokenOperator
         return self::LEFT_ASSOC;
     }
 
+    public function setVariable($variable)
+    {
+
+    }
+
     /**
      * @param AbstractToken[] $stack
      *
-     * @return TokenScalarNumber
+     * @return TokenScalar
      * @throws CalcException
      */
     public function execute(&$stack)
     {
         if (count($stack) < 2) {
-            throw new CalcException('Operator "multiply" error', CalcException::CALC_ERROR_OPERATOR);
+            throw new CalcException('Operator "power" error', CalcException::CALC_ERROR_OPERATOR);
         }
-        $op2 = array_pop($stack);
-        $op1 = array_pop($stack);
-        $result = $op1->getValueNum() * $op2->getValueNum();
+        $variable = array_pop($stack);
+        $value = array_pop($stack);
+        $this->container->get('Calculator')->setVar($variable, $value->getValue());
 
-        return new TokenScalarNumber($result);
+        return new TokenScalar($value->getValue());
     }
 }

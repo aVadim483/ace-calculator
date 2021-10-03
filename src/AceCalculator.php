@@ -210,6 +210,7 @@ class AceCalculator
                 'multiply'      => '\avadim\AceCalculator\Token\Operator\TokenOperatorMultiply',
                 'division'      => '\avadim\AceCalculator\Token\Operator\TokenOperatorDivide',
                 'power'         => '\avadim\AceCalculator\Token\Operator\TokenOperatorPower',
+                'assign'        => '\avadim\AceCalculator\Token\Operator\TokenOperatorAssign',
             ],
             'functions' => [
                 // name => [callback, minArguments, variableArguments]
@@ -238,6 +239,10 @@ class AceCalculator
             'variables' => [
                 'pi' => 3.14159265359,
                 'e'  => 2.71828182846
+            ],
+            'identifiers' => [
+                'PI' => M_PI,
+                'E'  => M_E
             ],
         ];
     }
@@ -304,6 +309,9 @@ class AceCalculator
         // set default variables
         if (isset($config['variables'])) {
             $this->setVars($config['variables']);
+        }
+        if (isset($config['identifiers'])) {
+            $this->setIdentifiers($config['identifiers']);
         }
         if (isset($config['options']['result_variable'])) {
             $this->setVar($config['options']['result_variable'], null);
@@ -611,10 +619,19 @@ class AceCalculator
      */
     public function getIdentifier($identifier)
     {
-        if (isset($this->variables[$identifier])) {
-            return $this->variables[$identifier];
+        if (isset($this->identifiers[$identifier])) {
+            return $this->identifiers[$identifier];
         }
         return null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdentifiers()
+    {
+
+        return $this->identifiers;
     }
 
     /**

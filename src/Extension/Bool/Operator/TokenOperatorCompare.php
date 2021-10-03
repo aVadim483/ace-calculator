@@ -21,7 +21,11 @@ use avadim\AceCalculator\Token\TokenScalar;
  */
 class TokenOperatorCompare extends AbstractTokenOperator
 {
-    protected $priority = 0;
+    const MATH_PRIORITY_COMPARE     = 0;
+    const MATH_PRIORITY_AND         = -1;
+    const MATH_PRIORITY_OR          = -1;
+
+    protected $priority = self::MATH_PRIORITY_COMPARE;
 
     /**
      * @return int
@@ -53,7 +57,7 @@ class TokenOperatorCompare extends AbstractTokenOperator
         $op1 = array_pop($stack);
         $localStack = [$op1, $op2, static::$pattern];
 
-        return $this->processor->callFunction('compare', $localStack);
+        return $this->getProcessor()->callFunction('compare', $localStack);
     }
 
 }

@@ -25,6 +25,8 @@ class TokenOperatorMinus extends AbstractTokenOperator
 {
     protected static $pattern = '-';
 
+    protected $priority = self::MATH_PRIORITY_MINUS;
+
     private $unary = false;
 
     /**
@@ -45,9 +47,9 @@ class TokenOperatorMinus extends AbstractTokenOperator
     public function getPriority()
     {
         if ($this->unary) {
-            return 4;
+            return self::MATH_PRIORITY_UNARY;
         }
-        return 1;
+        return $this->priority;
     }
 
     /**

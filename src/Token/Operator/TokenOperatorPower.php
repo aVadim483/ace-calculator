@@ -25,12 +25,14 @@ class TokenOperatorPower extends AbstractTokenOperator
 {
     protected static $pattern = '^';
 
+    protected $priority = self::MATH_PRIORITY_POWER;
+
     /**
      * @return int
      */
     public function getPriority()
     {
-        return 3;
+        return $this->priority;
     }
 
     /**

@@ -22,6 +22,8 @@ class TokenVariable extends AbstractToken
 {
     protected static $matching = self::MATCH_REGEX;
 
+    public $assignVariable = false;
+
     /**
      * @param string $pattern
      *
