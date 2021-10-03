@@ -21,12 +21,14 @@ use avadim\AceCalculator\Token\TokenScalar;
  */
 class TokenOperatorCompare extends AbstractTokenOperator
 {
+    protected $priority = 0;
+
     /**
      * @return int
      */
     public function getPriority()
     {
-        return 0;
+        return $this->priority;
     }
 
     /**

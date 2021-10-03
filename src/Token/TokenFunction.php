@@ -39,7 +39,8 @@ class TokenFunction extends TokenIdentifier
             } elseif (is_scalar($token)) {
                 $args[] = $token;
             } else {
-                throw new CalcException('Wrong arguments of function "' . $name . '"', CalcException::CALC_WRONG_FUNC_ARGS);
+                $error = sprintf('Wrong arguments of function "%s()" (%d expected)', $name, $numArguments);
+                throw new CalcException($error, CalcException::CALC_WRONG_FUNC_ARGS);
             }
         }
         if ($variableArguments) {
@@ -49,7 +50,8 @@ class TokenFunction extends TokenIdentifier
         } elseif ($stack) {
             $token = array_pop($stack);
             if (!$token instanceof TokenLeftBracket) {
-                throw new CalcException('Wrong arguments of function "' . $name . '"', CalcException::CALC_WRONG_FUNC_ARGS);
+                $error = sprintf('Wrong arguments of function "%s()" (%d expected)', $name, $numArguments);
+                throw new CalcException($error, CalcException::CALC_WRONG_FUNC_ARGS);
             }
         }
         $result = call_user_func_array($callback, array_reverse($args));

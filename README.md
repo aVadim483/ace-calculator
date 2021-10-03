@@ -27,7 +27,7 @@ print $calculator
         ->calc('4+10')
         ->calc('1 + 2 * (2 - $_)^2') // the variable $_ contains the result of the last calculation
         ->calc('$_ + sin(10)')
-        ->getResult();
+        ->result();
 ```
 
 ## Default operators and functions
@@ -82,7 +82,7 @@ You can load extensions with extra operators and functions by method `loadExtens
 $calculator->loadExtension('Bool');
 ```
 
-This extension load boolean operators: `< <= > >= == !=`
+This extension load boolean operators: `< <= > >= == != && ||`
 
 You can use boolean operators with extra function `if()`
 
@@ -94,11 +94,28 @@ print $calculator->execute('if(100+20+3 > 111, 23, 34)');
 
 Add custom function to executor:
 ```php
+$calculator->addFunction('dummy', function($a) {
+    // do something
+    return $result;
+});
+
+print $calculator->execute('dummy(123)');
+
+// If the function takes more than 1 argument, you must specify this
+
+// New function hypotenuse() with 2 arguments
 $calculator->addFunction('hypotenuse', function($a, $b) {
     return sqrt($a^2 + $b^2);
 }, 2);
 
-print $calculator->execute('hypotenuse(3,4)');
+// New function round()
+//   1 - minimum number of arguments
+//   true - used optional arguments
+$calculator->addFunction('round', function($a, $b = 0) {
+    return round($a,  $b);
+}, 1, true);
+
+print $calculator->execute('round(hypotenuse(3,4), 2)');
 ```
 
 ## Custom operators
@@ -116,7 +133,9 @@ class TokenOperatorModulus extends AbstractTokenOperator
     protected static $pattern = 'mod';
 
     /**
-     * Priority of this operator (1 equals "+" or "-", 2 equals "*" or "/", 3 equals "^")
+     * Priority of this operator, more value is more priority 
+     * (1 equals "+" or "-", 2 equals "*" or "/", 3 equals "^")
+     * 
      * @return int
      */
     public function getPriority()

@@ -738,15 +738,16 @@ class AceCalculator
      * Execute expression
      *
      * @param $expression
+     * @param $resultVariable
      *
      * @return number
      *
      * @throws CalcException
      * @throws LexerException
      */
-    public function execute($expression)
+    public function execute($expression, $resultVariable = null)
     {
-        $this->calc($expression);
+        $this->calc($expression, $resultVariable);
 
         return $this->result();
     }

@@ -19,6 +19,8 @@ return [
         'le'        => '\avadim\AceCalculator\Extension\Bool\Operator\TokenOperatorLe',
         'eq'        => '\avadim\AceCalculator\Extension\Bool\Operator\TokenOperatorEq',
         'ne'        => '\avadim\AceCalculator\Extension\Bool\Operator\TokenOperatorNe',
+        '&&'        => '\avadim\AceCalculator\Extension\Bool\Operator\TokenOperatorAnd',
+        '||'        => '\avadim\AceCalculator\Extension\Bool\Operator\TokenOperatorOr',
     ],
     'functions' => [
         'compare'   => ['\avadim\AceCalculator\Extension\Bool\compare', 2, true],

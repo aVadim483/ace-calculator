@@ -50,6 +50,10 @@ function compare($val1, $val2, $cond = null)
         case '<>':
         case 'ne':
             return ($val1 != $val2) ? 1 : 0;
+        case '&&':
+            return ($val1 && $val2) ? 1 : 0;
+        case '||':
+            return ($val1 || $val2) ? 1 : 0;
         default:
             throw new \RuntimeException('Unknown compare operator "' . $cond . '"');
     }

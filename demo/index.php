@@ -13,8 +13,9 @@ function source($file)
 {
     $source = file_get_contents($file);
     echo '<hr>';
-    echo '<pre>', htmlspecialchars($source), '<pre>';
+    highlight_string($source);
     echo '<hr>';
+
     include $file;
 }
 
@@ -27,7 +28,8 @@ if (isset($_GET['demo']) && preg_match('/^[\w\-]+$/', $_GET['demo'])) {
 echo '
     <a href="?demo=interactive">Interactive form</a>
     <a href="?demo=simple">Base usage</a>
-    <a href="?demo=operator">Custom operator & function</a>
+    <a href="?demo=functions">Custom functions</a>
+    <a href="?demo=operator">Custom operators</a>
     <a href="?demo=extension-bool">Extension usage</a>
     <a href="?demo=extension-colors">Extension "Colors" usage</a>
     <a href="?demo=extension-colors-hexa">Extension "ColorsHexa" usage</a>

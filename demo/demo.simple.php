@@ -18,6 +18,6 @@ $result3 = $calculator
     ->calc('$_ + sin(10)')
     ->result();
 
-echo "result1: $result1 \n";
-echo "result2: $result2 \n";
-echo "result3: $result3 \n";
+echo "result1: $result1 <br>\n";
+echo "result2: $result2 <br>\n";
+echo "result3: $result3 <br>\n";

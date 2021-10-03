@@ -53,5 +53,5 @@ $calculator->addFunction('strlen', static function($val) {
 $result1 = $calculator->execute('286 mod 100');
 $result2 = $calculator->execute('strlen("qwerty")');
 
-echo "result1: $result1\n";
-echo "result2: $result2\n";
+echo "result1: $result1 <br>\n";
+echo "result2: $result2 <br>\n";

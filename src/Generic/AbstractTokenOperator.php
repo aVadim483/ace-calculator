@@ -32,7 +32,7 @@ abstract class AbstractTokenOperator extends AbstractToken
     abstract public function getAssociation();
 
     /**
-     * @param  array       $stack
+     * @param array $stack
      *
      * @return mixed
      */
