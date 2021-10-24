@@ -31,9 +31,9 @@ class TokenOperatorPlus extends AbstractTokenOperator
 
     /**
      * @param string $lexeme
-     * @param array  $options
+     * @param array $options
      */
-    public function __construct($lexeme, $options = [])
+    public function __construct($lexeme, array $options = [])
     {
         parent::__construct($lexeme, $options);
         if (!empty($options['begin'])) {
@@ -73,7 +73,7 @@ class TokenOperatorPlus extends AbstractTokenOperator
     {
         if ($this->unary) {
             if (count($stack) < 1) {
-                throw new CalcException('Operator "plus" error', CalcException::CALC_ERROR_OPERATOR);
+                throw new CalcException('Operator "+" (plus) error', CalcException::CALC_ERROR_OPERATOR);
             }
             $op = array_pop($stack);
             $result = $op->getValueNum();

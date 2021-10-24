@@ -42,21 +42,17 @@ class TokenOperatorAssign extends AbstractTokenOperator
         return self::LEFT_ASSOC;
     }
 
-    public function setVariable($variable)
-    {
-
-    }
-
     /**
      * @param AbstractToken[] $stack
      *
      * @return TokenScalar
+     *
      * @throws CalcException
      */
     public function execute(&$stack)
     {
         if (count($stack) < 2) {
-            throw new CalcException('Operator "power" error', CalcException::CALC_ERROR_OPERATOR);
+            throw new CalcException('Operator "=" (assign) error', CalcException::CALC_ERROR_OPERATOR);
         }
         $variable = array_pop($stack);
         $value = array_pop($stack);

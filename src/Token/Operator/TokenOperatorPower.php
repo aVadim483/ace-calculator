@@ -52,7 +52,7 @@ class TokenOperatorPower extends AbstractTokenOperator
     public function execute(&$stack)
     {
         if (count($stack) < 2) {
-            throw new CalcException('Operator "power" error', CalcException::CALC_ERROR_OPERATOR);
+            throw new CalcException('Operator "^" (power) error', CalcException::CALC_ERROR_OPERATOR);
         }
         $op2 = array_pop($stack);
         $op1 = array_pop($stack);

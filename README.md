@@ -216,6 +216,19 @@ $calculator->setOption('non_numeric', true);
 $calculator->execute('$x * 12');
 ```
 
+## Division by zero
+
+Usually division by zero throws a ```DivisionByZeroException```. But you can redefine this behavior:
+
+```php
+$s = '10/0';
+$calculator->setDivisionByZeroHandler(static function($a, $b) {
+    return 0;
+});
+echo $calculator->execute($s);
+
+```
+
 ## Support AceCalculator
 
 if you find this package useful you can support and donate to me https://www.paypal.me/VShemarov

@@ -55,14 +55,20 @@ class TokenOperatorDivide extends AbstractTokenOperator
     public function execute(&$stack)
     {
         if (count($stack) < 2) {
-            throw new CalcException('Operator "divide" error', CalcException::CALC_ERROR_OPERATOR);
+            throw new CalcException('Operator "/" (divide) error', CalcException::CALC_ERROR_OPERATOR);
         }
         $op2 = array_pop($stack);
         $op1 = array_pop($stack);
         if ((float)$op2->getValue() === 0.0) {
-            throw new DivisionByZeroException('Divide a number by zero');
+            $handler = $this->container->get('Calculator')->getDivisionByZeroHandler();
+            if (!$handler) {
+                throw new DivisionByZeroException('Divide a number by zero');
+            }
+            $result = $handler($op1->getValueNum(), $op2->getValueNum());
         }
-        $result = $op1->getValueNum() / $op2->getValueNum();
+        else {
+            $result = $op1->getValueNum() / $op2->getValueNum();
+        }
 
         return new TokenScalarNumber($result);
     }

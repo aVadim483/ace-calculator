@@ -21,10 +21,10 @@ class TokenScalarHexNumber extends TokenScalar
     protected static $matching = self::MATCH_CALLBACK;
 
     /**
-     * @param string    $tokenStr
-     * @param array     $prevTokens
-     * @param array     $allLexemes
-     * @param int       $lexemeNum
+     * @param string $tokenStr
+     * @param array $prevTokens
+     * @param array $allLexemes
+     * @param int $lexemeNum
      *
      * @return bool
      */

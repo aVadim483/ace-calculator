@@ -180,13 +180,13 @@ class Lexer
     /**
      * Returns tokens in revers polish notation
      *
-     * @param  array $tokensStream Tokens stream
+     * @param array $tokensStream Tokens stream
      *
      * @return array
      *
      * @throws LexerException
      */
-    public function buildReversePolishNotation($tokensStream)
+    public function buildReversePolishNotation(array $tokensStream)
     {
         $output = [];
         $stack = [];

@@ -23,9 +23,9 @@ class TokenScalarString extends TokenScalar
 
     /**
      * @param string $lexeme
-     * @param array  $options
+     * @param array $options
      */
-    public function __construct($lexeme, $options = [])
+    public function __construct(string $lexeme, array $options = [])
     {
         if (($lexeme[0] === '"' || $lexeme[0] === '\'') && ($lexeme[0] === substr($lexeme, -1))) {
             $value = (string)substr($lexeme, 1, -1);

@@ -30,7 +30,6 @@ class TokenFunction extends TokenIdentifier
     public function execute(&$stack)
     {
         $args = [];
-        $token = null;
         list($name, $numArguments, $callback, $variableArguments) = $this->options;
         for ($i = 0; $i < $numArguments; $i++) {
             $token = $stack ? array_pop($stack) : null;

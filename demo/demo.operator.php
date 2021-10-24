@@ -47,7 +47,7 @@ class TokenOperatorModulus extends AbstractTokenOperator
 
 $calculator = new avadim\AceCalculator\AceCalculator();
 $calculator->addOperator('mod', '\TokenOperatorModulus');
-$calculator->addFunction('strlen', static function($val) {
+$calculator->addFunction('strlen', static function ($val) {
     return strlen($val);
 });
 

@@ -57,7 +57,7 @@ abstract class AbstractToken
      * @param string $lexeme
      * @param array  $options
      */
-    public function __construct($lexeme, array $options = [])
+    public function __construct(string $lexeme, array $options = [])
     {
         $this->lexeme = $lexeme;
         $this->value = $lexeme;
@@ -121,7 +121,7 @@ abstract class AbstractToken
      */
     public function getOption($name)
     {
-        return isset($this->options[$name]) ? $this->options[$name] : null;
+        return $this->options[$name] ?? null;
     }
 
     /**
