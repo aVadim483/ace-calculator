@@ -1,19 +1,10 @@
-<?php
-/**
- * This file is part of the AceCalculator package
- * https://github.com/aVadim483/ace-calculator
- *
- * Based on NeonXP/MathExecutor by Alexander Kiryukhin
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code
- */
+<?php declare(strict_types=1);
 
 namespace avadim\AceCalculator;
 
 use PHPUnit\Framework\TestCase;
 
-class TestAceCalculator extends \TestCase
+final class AceCalculatorTest extends TestCase
 {
     /**
      * Expressions data provider
@@ -44,6 +35,7 @@ class TestAceCalculator extends \TestCase
             ['(2+2)*-2'],
             ['(2+-2)*2'],
 
+            ['1 + 2 * (2 - (4+10))^2 + sin(10)'],
             ['sin(10) * cos(50) / min(10, 20/2)'],
 
             ['100500 * 3.5E5'],
@@ -59,7 +51,9 @@ class TestAceCalculator extends \TestCase
         $calculator = new AceCalculator();
 
         /** @var float $phpResult */
-        eval('$phpResult = ' . $expression . ';');
+        $eval = str_replace('^', '**', $expression);
+        eval('$phpResult = ' . $eval . ';');
+        print $expression . ' = ' . $phpResult;
         $this->assertEquals($calculator->execute($expression), $phpResult);
     }
 

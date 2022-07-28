@@ -52,7 +52,7 @@ class TokenOperatorDivide extends AbstractTokenOperator
      * @throws DivisionByZeroException
      * @throws CalcException
      */
-    public function execute(&$stack)
+    public function execute(array &$stack)
     {
         if (count($stack) < 2) {
             throw new CalcException('Operator "/" (divide) error', CalcException::CALC_ERROR_OPERATOR);

@@ -49,7 +49,7 @@ class TokenOperatorMultiply extends AbstractTokenOperator
      * @return TokenScalarNumber
      * @throws CalcException
      */
-    public function execute(&$stack)
+    public function execute(array &$stack)
     {
         if (count($stack) < 2) {
             throw new CalcException('Operator "*" (multiply) error', CalcException::CALC_ERROR_OPERATOR);

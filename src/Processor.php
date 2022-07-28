@@ -11,6 +11,9 @@
 
 namespace avadim\AceCalculator;
 
+use avadim\AceCalculator\Exception\UnknownIdentifier;
+use avadim\AceCalculator\Exception\UnknownVariable;
+use avadim\AceCalculator\Generic\AbstractToken;
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
 
 use avadim\AceCalculator\Token\TokenFunction;
@@ -37,12 +40,14 @@ class Processor
     private $logEnable = false;
     private $log = [];
 
+    private $handlers = [];
+
     /**
      * Processor constructor.
      *
-     * @param Container $container
+     * @param Container|null $container
      */
-    public function __construct($container = null)
+    public function __construct(Container $container = null)
     {
         $this->logEnable(true);
         $this->setContainer($container);
@@ -53,7 +58,7 @@ class Processor
      *
      * @return $this
      */
-    public function setContainer($container)
+    public function setContainer(Container $container)
     {
         $this->container = $container;
 
@@ -73,7 +78,7 @@ class Processor
      *
      * @return $this
      */
-    public function logEnable($flag)
+    public function logEnable(bool $flag)
     {
         $this->logEnable = (bool)$flag;
 
@@ -81,11 +86,11 @@ class Processor
     }
 
     /**
-     * @param bool $beautify
+     * @param bool|null $beautify
      *
      * @return array
      */
-    public function getLog($beautify = false)
+    public function getLog(?bool $beautify = false)
     {
         if ($beautify) {
             $result = [];
@@ -100,19 +105,26 @@ class Processor
     /**
      * @param TokenFunction|TokenIdentifier|AbstractTokenOperator $token
      * @param array $stack
-     * @param bool $return
+     * @param bool|null $return
      *
      * @return TokenScalar
      *
      * @throws CalcException
      */
-    protected function executeToken($token, &$stack, $return = false)
+    protected function executeToken($token, array &$stack, ?bool $return = false)
     {
         $oldStack = $stack;
         if (method_exists($token, 'execute')) {
-            $result = $token->execute($stack);
-        } else {
-            $result = $this->getTokenFactory()->createScalarToken($token->getValue());
+            $value = $token->execute($stack);
+        }
+        else {
+            $value = $token->getValue();
+        }
+        if ($value instanceof AbstractToken) {
+            $result = $value;
+        }
+        else {
+            $result = $this->getTokenFactory()->createScalarToken($value);
         }
         if (!$return) {
             $stack[] = $result;
@@ -126,7 +138,8 @@ class Processor
                 }
                 if (is_scalar($oldStack[$i])) {
                     $args[] = $oldStack[$i];
-                } else {
+                }
+                else {
                     $args[] = $oldStack[$i]->getValue();
                 }
             }
@@ -139,59 +152,84 @@ class Processor
     /**
      * Calculate array of tokens in reverse polish notation
      *
-     * @param  array $tokens      Array of tokens
-     * @param  array $variables   Array of variables
-     * @param  array $identifiers Array of identifiers
+     * @param array $tokens Array of tokens
+     * @param array|null $variables Array of variables
+     * @param array|null $identifiers Array of identifiers
      *
      * @return int|float
      *
      * @throws CalcException
      */
-    public function calculate($tokens, array $variables = [], array $identifiers = [])
+    public function calculate(array $tokens, ?array $variables = [], ?array $identifiers = [])
     {
         $stack = [];
-        /*
-        $tokensArray = [];
-        foreach ($tokens as $token) {
-            $tokensArray[] = is_scalar($token) ? $token : $token->getValue();
-        }
-        */
         foreach ($tokens as $token) {
             if ($token instanceof TokenFunction) {
                 $this->executeToken($token, $stack);
-            } elseif ($token instanceof AbstractTokenOperator) {
+            }
+            elseif ($token instanceof AbstractTokenOperator) {
                 if (empty($stack)) {
                     throw new CalcException('Incorrect expression ', CalcException::CALC_INCORRECT_EXPRESSION);
                 }
                 $this->executeToken($token, $stack);
-            } elseif ($token instanceof TokenLeftBracket) {
+            }
+            elseif ($token instanceof TokenLeftBracket) {
                 $stack[] = $token;
-            } elseif ($token instanceof TokenScalar) {
+            }
+            elseif ($token instanceof TokenScalar) {
                 $stack[] = $token;
-            } elseif ($token instanceof TokenIdentifier) {
+            }
+            elseif ($token instanceof TokenIdentifier) {
                 $identifier = $token->getValue();
                 if (isset($identifiers[$identifier])) {
                     if (is_callable($identifiers[$identifier])) {
-                        $token = $this->getTokenFactory()->createScalarToken(call_user_func($identifiers[$identifier], $variables, $identifiers));
-                    } elseif (is_object($identifiers[$identifier])) {
+                        $token = $this->getTokenFactory()->createScalarToken(call_user_func($identifiers[$identifier]));
+                    }
+                    elseif (is_object($identifiers[$identifier])) {
                         $token = $this->executeToken($token, $stack);
-                    } elseif (is_scalar($identifiers[$identifier])) {
+                    }
+                    elseif (is_scalar($identifiers[$identifier])) {
                         $token = $this->getTokenFactory()->createScalarToken($identifiers[$identifier]);
                     }
-                } else {
-                    throw new CalcException('Unknown identifier "' . $identifier . '"', CalcException::CALC_UNKNOWN_VARIABLE);
+                }
+                elseif ($handler = $this->getUnknownIdentifierHandler()) {
+                    $token = call_user_func($handler, $identifier);
+                    if (is_scalar($token)) {
+                        $token = $this->getTokenFactory()->createScalarToken($token);
+                    }
+                    elseif (!($token instanceof AbstractToken)) {
+                        throw new CalcException('Incorrect expression ', CalcException::CALC_INCORRECT_EXPRESSION);
+                    }
+                }
+                else {
+                    throw new UnknownIdentifier('Unknown identifier "' . $identifier . '"');
                 }
                 $stack[] = $token;
-            } elseif ($token instanceof TokenVariable) {
+            }
+            elseif ($token instanceof TokenVariable) {
                 $variable = $token->getValue();
                 if ($token->assignVariable) {
                     $stack[] = $variable;
-                } else {
-                    if (!$variables || !array_key_exists($variable, $variables)) {
-                        throw new CalcException('Unknown variable "' . $variable . '"', CalcException::CALC_UNKNOWN_VARIABLE);
+                }
+                else {
+                    if ($variables && array_key_exists($variable, $variables)) {
+                        $value = $variables[$variable];
                     }
-                    $value = $variables[$variable];
-                    $stack[] = $this->getTokenFactory()->createScalarToken($value);
+                    elseif ($handler = $this->getUnknownVariableHandler()) {
+                        $value = call_user_func($handler, $this->container->get('Calculator'), $variable, $variables);
+                    }
+                    else {
+                        throw new UnknownVariable('Unknown variable "' . $variable . '"');
+                    }
+                    if ($value instanceof AbstractToken) {
+                        $stack[] = $value;
+                    }
+                    elseif (is_scalar($value)) {
+                        $stack[] = $this->getTokenFactory()->createScalarToken($value);
+                    }
+                    else {
+                        throw new CalcException('Incorrect expression ', CalcException::CALC_INCORRECT_EXPRESSION);
+                    }
                 }
             }
         }
@@ -204,20 +242,82 @@ class Processor
     }
 
     /**
-     * @param $name
-     * @param $stack
+     * @param string $name
+     * @param array $stack
      *
      * @return TokenScalar
      *
      * @throws Exception\LexerException
      * @throws CalcException
      */
-    public function callFunction($name, &$stack)
+    public function callFunction(string $name, array &$stack)
     {
         if (!isset($this->functions[$name])) {
             $this->functions[$name] = $this->getTokenFactory()->createFunction($name);
         }
         return $this->executeToken($this->functions[$name], $stack, true);
+    }
+
+    /**
+     * @param string $type
+     * @param callable $handler
+     *
+     * @return $this
+     */
+    public function setHandler(string $type, callable $handler)
+    {
+        $key = strtolower(preg_replace("/[A-Z]/",  "_$0", lcfirst($type)));
+        $this->handlers[$key] = $handler;
+
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return callable|null
+     */
+    public function getHandler(string $type)
+    {
+        $key = strtolower(preg_replace("/[A-Z]/",  "_$0", lcfirst($type)));
+
+        return $this->handlers[$key] ?? null;
+    }
+
+    /**
+     * @param callable $handler
+     *
+     * @return $this
+     */
+    public function setUnknownIdentifierHandler(callable $handler)
+    {
+        return $this->setHandler('UnknownIdentifier', $handler);
+    }
+
+    /**
+     * @return callable|null
+     */
+    public function getUnknownIdentifierHandler()
+    {
+        return $this->getHandler('UnknownIdentifier');
+    }
+
+    /**
+     * @param callable $handler
+     *
+     * @return $this
+     */
+    public function setUnknownVariableHandler(callable $handler)
+    {
+        return $this->setHandler('UnknownVariable', $handler);
+    }
+
+    /**
+     * @return callable|null
+     */
+    public function getUnknownVariableHandler()
+    {
+        return $this->getHandler('UnknownVariable');
     }
 
 }
