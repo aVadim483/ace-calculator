@@ -3,7 +3,7 @@
 You can calculate classical mathematical expressions with variables, 
 or you can specify your own calculation rules, operators or custom functions
 
-Based on NeonXP/MathExecutor (https://github.com/NeonXP/MathExecutor), but advanced and improved.
+Forked on NeonXP/MathExecutor (https://github.com/NeonXP/MathExecutor), but advanced and improved.
 
 ## Install via Composer
 
