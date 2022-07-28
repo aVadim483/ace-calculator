@@ -21,13 +21,31 @@ abstract class AbstractTokenOperator extends AbstractToken
     const RIGHT_ASSOC   = 'RIGHT';
     const LEFT_ASSOC    = 'LEFT';
 
-    const MATH_PRIORITY_UNARY       = 4;
-    const MATH_PRIORITY_POWER       = 3;
-    const MATH_PRIORITY_MULTIPLY    = 2;
-    const MATH_PRIORITY_DIVIDE      = 2;
-    const MATH_PRIORITY_PLUS        = 1;
-    const MATH_PRIORITY_MINUS       = 1;
-    const MATH_PRIORITY_ASSIGN      = -5;
+    const MATH_PRIORITY_UNARY       = 40;
+    const MATH_PRIORITY_POWER       = 30;
+    const MATH_PRIORITY_MULTIPLY    = 20;
+    const MATH_PRIORITY_DIVIDE      = 20;
+    const MATH_PRIORITY_PLUS        = 10;
+    const MATH_PRIORITY_MINUS       = 10;
+    const MATH_PRIORITY_ASSIGN      = -50;
+
+    protected static $pattern;
+
+    /**
+     *
+     */
+    public function __construct($lexeme = null)
+    {
+        parent::__construct($lexeme ?? static::getPattern());
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPattern()
+    {
+        return static::$pattern;
+    }
 
     /**
      * @return int
@@ -44,7 +62,7 @@ abstract class AbstractTokenOperator extends AbstractToken
      *
      * @return mixed
      */
-    abstract public function execute(&$stack);
+    abstract public function execute(array &$stack);
 
     /**
      * @param $token

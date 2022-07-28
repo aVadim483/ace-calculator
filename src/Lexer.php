@@ -67,6 +67,11 @@ class Lexer
         return $this->container->get('TokenFactory');
     }
 
+    /**
+     * @param $lexemes
+     *
+     * @return $this
+     */
     public function setLexemes($lexemes)
     {
         $this->lexemes = $lexemes;
@@ -74,6 +79,9 @@ class Lexer
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getLexemes()
     {
         return $this->lexemes;
@@ -84,7 +92,7 @@ class Lexer
      *
      * @return $this
      */
-    public function init($input)
+    public function init(string $input)
     {
         $lexemes = $this->parse($input);
         $this->setLexemes($lexemes);
@@ -93,11 +101,11 @@ class Lexer
     }
 
     /**
-     * @param $input
+     * @param string $input
      *
      * @return array
      */
-    protected function parse($input)
+    protected function parse(string $input): array
     {
         // parse to lexemes array
         $phpTokens = token_get_all('<?php ' . $input);
@@ -121,7 +129,13 @@ class Lexer
                 }
             }
         }
-        return array_merge(...$lexemesArray);
+        $result = [];
+        foreach (array_merge(...$lexemesArray) as $lexeme) {
+            if (trim($lexeme) !== '') {
+                $result[] = $lexeme;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -129,7 +143,7 @@ class Lexer
      *
      * @throws LexerException
      */
-    public function getTokensStream()
+    public function getTokensStream(): array
     {
         // convert lexemes to tokens
         $tokensStream = [];
@@ -164,13 +178,13 @@ class Lexer
     /**
      * Parse input string and returns tokens stream
      *
-     * @param  string $input Source string of equation
+     * @param string $input Source string of equation
      *
      * @return array
      *
      * @throws LexerException
      */
-    public function stringToTokensStream($input)
+    public function stringToTokensStream(string $input): array
     {
         $this->init($input);
 
@@ -186,7 +200,7 @@ class Lexer
      *
      * @throws LexerException
      */
-    public function buildReversePolishNotation(array $tokensStream)
+    public function buildReversePolishNotation(array $tokensStream): array
     {
         $output = [];
         $stack = [];

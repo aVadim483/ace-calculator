@@ -51,7 +51,7 @@ class TokenOperatorCompare extends AbstractTokenOperator
      * @throws \avadim\AceCalculator\Exception\CalcException
      * @throws \avadim\AceCalculator\Exception\LexerException
      */
-    public function execute(&$stack)
+    public function execute(array &$stack)
     {
         $op2 = array_pop($stack);
         $op1 = array_pop($stack);

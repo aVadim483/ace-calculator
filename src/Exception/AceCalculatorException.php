@@ -16,7 +16,7 @@ namespace avadim\AceCalculator\Exception;
  *
  * @package avadim\AceCalculator
  */
-abstract class AceCalculatorException extends \Exception
+abstract class AceCalculatorException extends \RuntimeException
 {
     const CONFIG_OTHER_ERRORS       = 0;
     const CONFIG_OPERATOR_BAD_INTERFACE = 10;

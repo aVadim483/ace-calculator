@@ -5,13 +5,26 @@ or you can specify your own calculation rules, operators or custom functions
 
 Based on NeonXP/MathExecutor (https://github.com/NeonXP/MathExecutor), but advanced and improved.
 
-## Install via Composer
+Jump To:
+* [Installation](#installation)
+* [Simple Usage](#simple-usage)
+* [Default operators and functions](#default-operators-and-functions)
+* [Variables](#variables)
+* [Multiple expressions](#multiple-expressions)
+* [Extra operators and functions](#extra-operators-and-functions)
+* [Custom functions](#custom-functions)
+* [Custom operators](#custom-operators)
+* [Interpreting of identifiers](#interpreting-of-identifiers)
+* [Non-numeric values](#non-numeric-values)
+* [Error Handlers](#error-handlers)
+
+## Installation
 
 |$ composer require avadim/ace-claculator
 
 All instructions to install here: https://packagist.org/packages/avadim/ace-claculator
 
-## Sample usage
+## Sample Usage
 
 ```php
 require 'vendor/autoload.php';
@@ -34,10 +47,11 @@ print $calculator
 
 Default operators: `+ - * / ^`
 
-Default functions:
+Arithmetic functions
+* abs()
+* avg()
 * min()
 * max()
-* avg()
 * sqrt()
 * log()
 * log10()
@@ -45,13 +59,16 @@ Default functions:
 * floor()
 * ceil()
 * round()
+
+Trigonometric functions
+* acos()
+* asin()
+* atn()
 * sin()
 * cos()
 * tn()
-* asin()
-* acos()
-* atn()
 * degrees()
+* rad2deg() (alias of degrees)
 * radians()
 
 ## Variables
@@ -82,6 +99,14 @@ $calculator
     ->calc('$var3 = ($var1 + $var2)')
     ->calc('$var3 * 20')
     ->result();
+```
+
+## Multiple expressions
+
+You can execute multiple expressions in one by separating them with a semicolon
+```php
+
+$calculator->execute('$var1=0.15; $var2=0.22; $var3 = $var1 + $var2; $var3 * 20');
 ```
 
 ## Extra operators and functions
@@ -130,7 +155,26 @@ print $calculator->execute('round(hypotenuse(3,4), 2)');
 
 ## Custom operators
 
-Create the class of custom operator:
+A simple way to add an operator
+
+```php
+use avadim\AceCalculator\Token\Operator\TokenOperator;
+$func = function (array &$stack)
+{
+    $op2 = array_pop($stack);
+    $op1 = array_pop($stack);
+    $result = $op1->getValue() % $op2->getValue();
+
+    return new \avadim\AceCalculator\Token\TokenScalarNumber($result);
+};
+
+$operator = new TokenOperator('mod', TokenOperator::MATH_PRIORITY_DIVIDE, $func);
+$calculator->addOperator($operator);
+echo $calculator->execute('286 mod 100');
+
+```
+
+Alternative way to add operator using specified class. Create the class of custom operator
 
 ```php
 <?php
@@ -183,7 +227,7 @@ And add the class to executor:
 
 ```php
 $calculator = new avadim\AceClaculator\AceClaculator();
-$calculator->addOperator('mod', '\TokenOperatorModulus');
+$calculator->addOperator('mod', \TokenOperatorModulus::class);
 echo $calculator->execute('286 mod 100');
 ```
 
@@ -216,19 +260,66 @@ $calculator->setOption('non_numeric', true);
 $calculator->execute('$x * 12');
 ```
 
-## Division by zero
+## Error Handlers
 
-Usually division by zero throws a ```DivisionByZeroException```. But you can redefine this behavior:
+### Division by zero
+
+Usually division by zero throws a ```DivisionByZeroException```. But you can redefine this behavior
 
 ```php
 $s = '10/0';
 $calculator->setDivisionByZeroHandler(static function($a, $b) {
+    // $a and $b - the first and second operands
     return 0;
 });
 echo $calculator->execute($s);
 
 ```
 
+### Unknown Identifier
+
+Usually unknown identifier throws a ```UnknownIdentifier```. But you can redefine this behavior
+
+```php
+$calculator->setIdentifiers([
+    'ONE' => 1,
+    'TWO' => 2,
+]);
+
+// Will throw an exception
+echo $calculator->execute('THREE');
+
+$calculator->setUnknownIdentifierHandler(static function($identifier) {
+    return $identifier;
+});
+// Returns name of identifier as string 
+echo $calculator->execute('THREE');
+
+$calculator->setUnknownIdentifierHandler(static function($identifier) use ($calculator) {
+    return $calculator->execute('ONE + TWO');
+});
+// Returns result of expression ONE + TWO
+echo $calculator->execute('THREE');
+
+```
+
+### Unknown Variable
+
+Usually unknown identifier throws a ```UnknownIdentifier```. But you can redefine this behavior
+
+```php
+$calculator = new avadim\AceCalculator\AceCalculator();
+
+// Will throw an exception
+$calculator->execute('$a * 4');
+
+// Now any undefined variables will be interpreted as 0
+$calculator->setUnknownVariableHandler(static function($variable) {
+    return 0;
+});
+$calculator->execute('$a * 4');
+```
+
 ## Support AceCalculator
 
-if you find this package useful you can support and donate to me https://www.paypal.me/VShemarov
+if you find this package useful you just give me star on Github :)

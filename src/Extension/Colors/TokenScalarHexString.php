@@ -35,24 +35,24 @@ class TokenScalarHexString extends TokenScalar
     }
 
     /**
-     * @param string          $lexeme
+     * @param string $tokenStr
      * @param AbstractToken[] $prevTokens
-     * @param array           $allLexemes
-     * @param int             $lexemeNum
+     * @param array $allLexemes
+     * @param int $lexemeNum
      *
      * @return bool
      */
-    public static function isMatch($lexeme, $prevTokens, $allLexemes, &$lexemeNum)
+    public static function isMatch(string $tokenStr, array $prevTokens, array $allLexemes, int &$lexemeNum)
     {
-        if ($lexeme === '#') {
+        if ($tokenStr === '#') {
             $i = 0;
-            while (isset($allLexemes[$lexemeNum + $i + 1]) && preg_match(self::$pattern, $lexeme . $allLexemes[$lexemeNum + $i + 1])) {
+            while (isset($allLexemes[$lexemeNum + $i + 1]) && preg_match(self::$pattern, $tokenStr . $allLexemes[$lexemeNum + $i + 1])) {
                 ++$i;
-                $lexeme .= $allLexemes[$lexemeNum + $i];
+                $tokenStr .= $allLexemes[$lexemeNum + $i];
             }
-            if ($lexeme !== '#') {
+            if ($tokenStr !== '#') {
                 $lexemeNum += $i; //isset($allLexemes[$lexemeNum + $i]) ? $i - 1 : $i;
-                return $lexeme;
+                return $tokenStr;
             }
         }
         return false;

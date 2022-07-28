@@ -13,6 +13,7 @@ namespace avadim\AceCalculator\Generic;
 
 use avadim\AceCalculator\Container;
 use avadim\AceCalculator\Processor;
+use avadim\AceCalculator\Token\TokenScalar;
 
 /**
  * Class AbstractToken
@@ -55,7 +56,7 @@ abstract class AbstractToken
 
     /**
      * @param string $lexeme
-     * @param array  $options
+     * @param array|null $options
      */
     public function __construct(string $lexeme, array $options = [])
     {
@@ -75,7 +76,7 @@ abstract class AbstractToken
     /**
      * @param string $value
      */
-    public function setValue($value)
+    public function setValue(string $value)
     {
         $this->value = $value;
     }
@@ -133,11 +134,11 @@ abstract class AbstractToken
     }
 
     /**
-     * @param string $pattern
+     * @param string|null $pattern
      *
      * @return array
      */
-    public static function getMatching($pattern = null)
+    public static function getMatching(string $pattern = null)
     {
         return [
             'pattern'       => (null === $pattern) ? static::$pattern : $pattern,
@@ -148,14 +149,14 @@ abstract class AbstractToken
     }
 
     /**
-     * @param string          $tokenStr
+     * @param string $tokenStr
      * @param AbstractToken[] $prevTokens
-     * @param array           $allLexemes
-     * @param int             $lexemeNum
+     * @param array $allLexemes
+     * @param int $lexemeNum
      *
      * @return bool
      */
-    public static function isMatch($tokenStr, $prevTokens, $allLexemes, &$lexemeNum)
+    public static function isMatch(string $tokenStr, array $prevTokens, array $allLexemes, int &$lexemeNum)
     {
         return static::$pattern === $tokenStr;
     }
@@ -194,6 +195,16 @@ abstract class AbstractToken
     public function getContainer()
     {
         return $this->container;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return TokenScalar
+     */
+    public function createScalarToken($value)
+    {
+        return $this->getProcessor()->getTokenFactory()->createScalarToken($value);
     }
 
 }

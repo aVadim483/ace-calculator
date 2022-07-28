@@ -25,11 +25,11 @@ class TokenVariable extends AbstractToken
     public $assignVariable = false;
 
     /**
-     * @param string $pattern
+     * @param string|null $pattern
      *
      * @return array
      */
-    public static function getMatching($pattern = null)
+    public static function getMatching(string $pattern = null)
     {
         return [
             'pattern'  => '/' . preg_quote($pattern, '/') . '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',

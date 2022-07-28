@@ -69,7 +69,7 @@ class TokenOperatorPlus extends AbstractTokenOperator
      * @return TokenScalarNumber
      * @throws CalcException
      */
-    public function execute(&$stack)
+    public function execute(array &$stack)
     {
         if ($this->unary) {
             if (count($stack) < 1) {

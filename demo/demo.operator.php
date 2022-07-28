@@ -35,7 +35,7 @@ class TokenOperatorModulus extends AbstractTokenOperator
      *
      * @return TokenScalarNumber
      */
-    public function execute(&$stack)
+    public function execute(array &$stack)
     {
         $op2 = array_pop($stack);
         $op1 = array_pop($stack);

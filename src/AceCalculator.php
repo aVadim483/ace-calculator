@@ -15,6 +15,7 @@ use avadim\AceCalculator\Exception\CalcException;
 use avadim\AceCalculator\Exception\ConfigException;
 use avadim\AceCalculator\Exception\LexerException;
 
+use avadim\AceCalculator\Generic\AbstractTokenOperator;
 use avadim\AceCalculator\Token\TokenScalar;
 
 /**
@@ -98,7 +99,7 @@ class AceCalculator
      *
      * @throws ConfigException
      */
-    public function __construct(array $config = null)
+    public function __construct(?array $config = null)
     {
         $this->init($config);
     }
@@ -118,7 +119,7 @@ class AceCalculator
      *
      * @throws ConfigException
      */
-    protected function init(array $config = null)
+    protected function init(?array $config = null)
     {
         $this->container = new Container();
         $this->container->set('Calculator', $this);
@@ -135,7 +136,7 @@ class AceCalculator
     /**
      * @param bool $flag
      */
-    public function cacheEnable($flag)
+    public function cacheEnable(bool $flag)
     {
         $this->cacheEnable = (bool)$flag;
     }
@@ -145,7 +146,7 @@ class AceCalculator
      *
      * @return TokenFactory
      */
-    public function createTokenFactory($container)
+    public function createTokenFactory(Container $container)
     {
         return new TokenFactory($container);
     }
@@ -155,7 +156,7 @@ class AceCalculator
      *
      * @return Lexer
      */
-    public function createLexer($container)
+    public function createLexer(Container $container)
     {
         return new Lexer($container);
     }
@@ -165,7 +166,7 @@ class AceCalculator
      *
      * @return Processor
      */
-    public function createProcessor($container)
+    public function createProcessor(Container $container)
     {
         return new Processor($container);
     }
@@ -227,6 +228,7 @@ class AceCalculator
             ],
             'functions' => [
                 // name => [callback, minArguments, variableArguments]
+                'abs'   => 'abs',
                 'min'   => ['min', 2, true],
                 'max'   => ['max', 2, true],
                 'avg'   => [static function() { return array_sum(func_get_args()) / func_num_args(); }, 2, true],
@@ -332,13 +334,13 @@ class AceCalculator
     }
 
     /**
-     * @param $config
+     * @param array $config
      *
      * @return $this
      *
      * @throws ConfigException
      */
-    protected function setConfig($config)
+    protected function setConfig(array $config)
     {
         $this->applyConfig($config);
         $this->config = $config;
@@ -347,13 +349,13 @@ class AceCalculator
     }
 
     /**
-     * @param $config
+     * @param array $config
      *
      * @return $this
      *
      * @throws ConfigException
      */
-    protected function addConfig($config)
+    protected function addConfig(array $config)
     {
         $this->applyConfig($config);
         $this->config = array_merge($this->config, $config);
@@ -368,7 +370,7 @@ class AceCalculator
      *
      * @throws ConfigException
      */
-    public function loadConfig($configFile)
+    public function loadConfig(string $configFile)
     {
         if (is_file($configFile)) {
             $config = include($configFile);
@@ -405,13 +407,13 @@ class AceCalculator
 
     /**
      * @param string $extensionName
-     * @param string $path
+     * @param string|null $path
      *
      * @return AceCalculator
      *
      * @throws ConfigException
      */
-    public function loadExtension($extensionName, $path = null)
+    public function loadExtension(string $extensionName, string $path = null)
     {
         if (!isset($this->extensions[$extensionName])) {
             if (null === $path) {
@@ -435,7 +437,7 @@ class AceCalculator
      * @param string $name
      * @param mixed $value
      */
-    protected function setConfigOption($name, $value)
+    protected function setConfigOption(string $name, $value)
     {
         $this->config['options'][$name] = $value;
     }
@@ -445,7 +447,7 @@ class AceCalculator
      *
      * @return mixed
      */
-    protected function getConfigOption($name)
+    protected function getConfigOption(string $name)
     {
         if (isset($this->config['options'][$name])) {
             return $this->config['options'][$name];
@@ -454,12 +456,12 @@ class AceCalculator
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed $value
      *
      * @return $this
      */
-    public function setOption($name, $value)
+    public function setOption(string $name, $value)
     {
         $this->setConfigOption($name, $value);
 
@@ -467,11 +469,11 @@ class AceCalculator
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return mixed
      */
-    public function getOption($name)
+    public function getOption(string $name)
     {
         return $this->getConfigOption($name);
     }
@@ -498,11 +500,11 @@ class AceCalculator
      * Add variables to executor
      *
      * @param array $variables
-     * @param bool $clear Clear previous variables
+     * @param bool|null $clear Clear previous variables
      *
      * @return AceCalculator
      */
-    public function setVars(array $variables, bool $clear = true)
+    public function setVars(array $variables, ?bool $clear = true)
     {
         if ($clear) {
             $this->removeVars();
@@ -584,11 +586,11 @@ class AceCalculator
      * Add identifiers to executor
      *
      * @param array $identifiers
-     * @param bool $clear Clear previous identifiers
+     * @param bool|null $clear Clear previous identifiers
      *
      * @return AceCalculator
      */
-    public function setIdentifiers(array $identifiers, bool $clear = true)
+    public function setIdentifiers(array $identifiers, ?bool $clear = true)
     {
         if ($clear) {
             $this->removeIdentifiers();
@@ -650,15 +652,19 @@ class AceCalculator
     /**
      * Add operator to executor
      *
-     * @param string $name
-     * @param string $operatorClass Class of operator token
+     * @param string|object $name
+     * @param string|array|null $operatorClass Class of operator token or options for new operator
      *
      * @return AceCalculator
      *
      * @throws ConfigException
      */
-    public function addOperator(string $name, string $operatorClass)
+    public function addOperator($name, $operatorClass = null)
     {
+        if ($name instanceof AbstractTokenOperator) {
+            $operatorClass = $name;
+            $name = $operatorClass->getPattern();
+        }
         $this->getTokenFactory()->addOperator($name, $operatorClass);
 
         return $this;
@@ -669,12 +675,12 @@ class AceCalculator
      *
      * @param string $name Name of function
      * @param callable|null $callback Function
-     * @param int $minArguments Count of arguments
-     * @param bool $variableArguments
+     * @param int|null $minArguments Count of arguments
+     * @param bool|null $variableArguments
      *
      * @return AceCalculator
      */
-    public function addFunction(string $name, callable $callback = null, int $minArguments = 1, bool $variableArguments = false)
+    public function addFunction(string $name, ?callable $callback = null, ?int $minArguments = 1, ?bool $variableArguments = false)
     {
         $function = static::createFunction($name, $callback, $minArguments, $variableArguments);
         $this->getTokenFactory()->addFunction($name, $function);
@@ -786,15 +792,10 @@ class AceCalculator
         if ($expression === '') {
             throw new CalcException('Expression is empty', CalcException::CALC_INCORRECT_EXPRESSION);
         }
-        if (!is_scalar($expression)) {
-            throw new CalcException('Evaluated expression is not a string', CalcException::CALC_INCORRECT_EXPRESSION);
-        }
         if (preg_match('/^[+-]?\d+$/', $expression)) {
             $result = (int)$expression;
         } elseif (is_numeric($expression)) {
             $result = (float)$expression;
-        } elseif (!is_string($expression)) {
-            throw new CalcException('Evaluated expression is not a string', CalcException::CALC_INCORRECT_EXPRESSION);
         } else {
             if (!$this->cacheEnable || !isset($this->cache[$expression])) {
                 $lexer = $this->getLexer();
@@ -836,18 +837,42 @@ class AceCalculator
      * Execute expression
      *
      * @param string $expression
-     * @param $resultVariable
+     * @param string|null $resultVariable
      *
      * @return number
      *
      * @throws CalcException
      * @throws LexerException
      */
-    public function execute(string $expression, $resultVariable = null)
+    public function execute(string $expression, string $resultVariable = null)
     {
         $this->calc($expression, $resultVariable);
 
         return $this->result();
+    }
+
+    /**
+     * @param callable $handler
+     *
+     * @return $this
+     */
+    public function setUnknownIdentifierHandler(callable $handler)
+    {
+        $this->getProcessor()->setUnknownIdentifierHandler($handler);
+
+        return $this;
+    }
+
+    /**
+     * @param callable $handler
+     *
+     * @return $this
+     */
+    public function setUnknownVariableHandler(callable $handler)
+    {
+        $this->getProcessor()->setUnknownVariableHandler($handler);
+
+        return $this;
     }
 
     /**
@@ -860,7 +885,7 @@ class AceCalculator
      *
      * @return array;
      */
-    public static function createFunction(string $name, callable $callback, $minArguments = 1, $variableArguments = false)
+    public static function createFunction(string $name, callable $callback, ?int $minArguments = 1, ?bool $variableArguments = false)
     {
         if (null === $minArguments) {
             $minArguments = 1;

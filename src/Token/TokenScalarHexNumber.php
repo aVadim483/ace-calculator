@@ -28,7 +28,7 @@ class TokenScalarHexNumber extends TokenScalar
      *
      * @return bool
      */
-    public static function isMatch($tokenStr, $prevTokens, $allLexemes, &$lexemeNum)
+    public static function isMatch(string $tokenStr, array $prevTokens, array $allLexemes, int &$lexemeNum)
     {
         return preg_match('/^0x[0-9a-f]+/i', $tokenStr);
     }
