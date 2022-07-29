@@ -11,7 +11,8 @@
 
 namespace avadim\AceCalculator;
 
-use avadim\AceCalculator\Exception\CalcException;
+use avadim\AceCalculator\Exception\AceCalculatorException;
+use avadim\AceCalculator\Exception\ExecException;
 use avadim\AceCalculator\Exception\ConfigException;
 use avadim\AceCalculator\Exception\LexerException;
 
@@ -562,7 +563,7 @@ class AceCalculator
     /**
      * @return array
      */
-    public function getVars()
+    public function getVars(): array
     {
         return $this->variables;
     }
@@ -571,12 +572,15 @@ class AceCalculator
      * Add identifier to executor
      *
      * @param string $identifier
-     * @param callable|TokenScalar $value
+     * @param callable|scalar|TokenScalar $value
      *
      * @return AceCalculator
      */
     public function setIdentifier(string $identifier, $value)
     {
+        if (!is_scalar($value) && !is_callable($value) && !($value instanceof TokenScalar)) {
+            AceCalculatorException::call(AceCalculatorException::CALC_INCORRECT_IDENTIFIER_EXPR, [$identifier]);
+        }
         $this->identifiers[$identifier] = $value;
 
         return $this;
@@ -751,12 +755,12 @@ class AceCalculator
      * @return $this
      *
      * @throws LexerException
-     * @throws CalcException
+     * @throws ExecException
      */
     public function calc(string $expression, string $resultVariable = null)
     {
         if ($expression === '') {
-            throw new CalcException('Expression is empty', CalcException::CALC_INCORRECT_EXPRESSION);
+            throw new ExecException('Expression is empty', ExecException::CALC_INCORRECT_EXPRESSION);
         }
         if ($this->multipleExpressions) {
             $expressions = explode(';', $expression);
@@ -785,18 +789,20 @@ class AceCalculator
      * @return mixed
      *
      * @throws LexerException
-     * @throws CalcException
+     * @throws ExecException
      */
     protected function calcExpression(string $expression)
     {
         if ($expression === '') {
-            throw new CalcException('Expression is empty', CalcException::CALC_INCORRECT_EXPRESSION);
+            throw new ExecException('Expression is empty', ExecException::CALC_INCORRECT_EXPRESSION);
         }
         if (preg_match('/^[+-]?\d+$/', $expression)) {
             $result = (int)$expression;
-        } elseif (is_numeric($expression)) {
+        }
+        elseif (is_numeric($expression)) {
             $result = (float)$expression;
-        } else {
+        }
+        else {
             if (!$this->cacheEnable || !isset($this->cache[$expression])) {
                 $lexer = $this->getLexer();
                 $this->tokensStream = $lexer->stringToTokensStream($expression);
@@ -810,8 +816,8 @@ class AceCalculator
             $processor = $this->getProcessor();
             try {
                 $result = $processor->calculate($this->tokensStack, $this->variables, $this->identifiers);
-            } catch (CalcException $e) {
-                $exception = new CalcException('Expression calculation error: ' . $e->getMessage() . '. Expression: ' . $expression);
+            } catch (ExecException $e) {
+                $exception = new ExecException('Expression calculation error: ' . $e->getMessage() . '. Expression: ' . $expression);
                 $exception->setErrorMessage($e->getMessage());
                 $exception->setErrorExpression($expression);
                 throw $exception;
@@ -841,7 +847,7 @@ class AceCalculator
      *
      * @return number
      *
-     * @throws CalcException
+     * @throws ExecException
      * @throws LexerException
      */
     public function execute(string $expression, string $resultVariable = null)

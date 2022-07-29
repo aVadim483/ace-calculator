@@ -48,7 +48,7 @@ class TokenOperatorCompare extends AbstractTokenOperator
      *
      * @return TokenScalar
      *
-     * @throws \avadim\AceCalculator\Exception\CalcException
+     * @throws \avadim\AceCalculator\Exception\ExecException
      * @throws \avadim\AceCalculator\Exception\LexerException
      */
     public function execute(array &$stack)

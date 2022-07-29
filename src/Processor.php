@@ -22,7 +22,7 @@ use avadim\AceCalculator\Token\TokenLeftBracket;
 use avadim\AceCalculator\Token\TokenScalar;
 use avadim\AceCalculator\Token\TokenVariable;
 
-use avadim\AceCalculator\Exception\CalcException;
+use avadim\AceCalculator\Exception\ExecException;
 
 /**
  * Class Processor
@@ -109,7 +109,7 @@ class Processor
      *
      * @return TokenScalar
      *
-     * @throws CalcException
+     * @throws ExecException
      */
     protected function executeToken($token, array &$stack, ?bool $return = false)
     {
@@ -158,7 +158,7 @@ class Processor
      *
      * @return int|float
      *
-     * @throws CalcException
+     * @throws ExecException
      */
     public function calculate(array $tokens, ?array $variables = [], ?array $identifiers = [])
     {
@@ -169,7 +169,7 @@ class Processor
             }
             elseif ($token instanceof AbstractTokenOperator) {
                 if (empty($stack)) {
-                    throw new CalcException('Incorrect expression ', CalcException::CALC_INCORRECT_EXPRESSION);
+                    throw new ExecException('Incorrect expression ', ExecException::CALC_INCORRECT_EXPRESSION);
                 }
                 $this->executeToken($token, $stack);
             }
@@ -182,14 +182,26 @@ class Processor
             elseif ($token instanceof TokenIdentifier) {
                 $identifier = $token->getValue();
                 if (isset($identifiers[$identifier])) {
-                    if (is_callable($identifiers[$identifier])) {
-                        $token = $this->getTokenFactory()->createScalarToken(call_user_func($identifiers[$identifier]));
-                    }
-                    elseif (is_object($identifiers[$identifier])) {
+                    if ($identifiers[$identifier] instanceof AbstractToken) {
                         $token = $this->executeToken($token, $stack);
                     }
-                    elseif (is_scalar($identifiers[$identifier])) {
-                        $token = $this->getTokenFactory()->createScalarToken($identifiers[$identifier]);
+                    else {
+                        if (is_callable($identifiers[$identifier])) {
+                            $value = $this->container->get('Calculator')->execute(call_user_func($identifiers[$identifier], $identifier));
+                        }
+                        elseif (is_scalar($identifiers[$identifier])) {
+                            $value = $identifiers[$identifier];
+                        }
+                        else {
+                            $value = null;
+                        }
+                        if (is_numeric($value)) {
+                            $token = $this->getTokenFactory()->createScalarToken($value);
+                        }
+                        else {
+                            $value = $this->container->get('Calculator')->execute($value);
+                            $token = $this->getTokenFactory()->createScalarToken($value);
+                        }
                     }
                 }
                 elseif ($handler = $this->getUnknownIdentifierHandler()) {
@@ -198,7 +210,7 @@ class Processor
                         $token = $this->getTokenFactory()->createScalarToken($token);
                     }
                     elseif (!($token instanceof AbstractToken)) {
-                        throw new CalcException('Incorrect expression ', CalcException::CALC_INCORRECT_EXPRESSION);
+                        throw new ExecException('Incorrect expression ', ExecException::CALC_INCORRECT_EXPRESSION);
                     }
                 }
                 else {
@@ -228,14 +240,14 @@ class Processor
                         $stack[] = $this->getTokenFactory()->createScalarToken($value);
                     }
                     else {
-                        throw new CalcException('Incorrect expression ', CalcException::CALC_INCORRECT_EXPRESSION);
+                        throw new ExecException('Incorrect expression ', ExecException::CALC_INCORRECT_EXPRESSION);
                     }
                 }
             }
         }
         $result = array_pop($stack);
         if (!empty($stack)) {
-            throw new CalcException('Incorrect expression ', CalcException::CALC_INCORRECT_EXPRESSION);
+            throw new ExecException('Incorrect expression ', ExecException::CALC_INCORRECT_EXPRESSION);
         }
 
         return $result->getValue();
@@ -248,7 +260,7 @@ class Processor
      * @return TokenScalar
      *
      * @throws Exception\LexerException
-     * @throws CalcException
+     * @throws ExecException
      */
     public function callFunction(string $name, array &$stack)
     {

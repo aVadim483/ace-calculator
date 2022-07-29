@@ -238,7 +238,7 @@ Identifiers - start with a letter and consist of a sequence of letters and numbe
 ```php
 $calculator->setIdentifiers([
     'ONE' => 1,
-    'YEAR' => function($variables, $identifiers) { return date('Y'); },
+    'YEAR' => function($identifier) { return date('Y'); },
 ]);
 
 $calculator->execute('YEAR + ONE');

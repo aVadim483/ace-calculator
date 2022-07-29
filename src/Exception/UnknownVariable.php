@@ -16,7 +16,7 @@ namespace avadim\AceCalculator\Exception;
  *
  * @package avadim\AceCalculator
  */
-class UnknownVariable extends CalcException
+class UnknownVariable extends ExecException
 {
     public function __construct(string $message = '', int $code = 0, $previous = null)
     {

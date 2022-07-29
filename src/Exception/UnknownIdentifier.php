@@ -16,7 +16,7 @@ namespace avadim\AceCalculator\Exception;
  *
  * @package avadim\AceCalculator
  */
-class UnknownIdentifier extends CalcException
+class UnknownIdentifier extends ExecException
 {
     public function __construct(string $message = '', int $code = 0, $previous = null)
     {

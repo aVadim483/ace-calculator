@@ -11,7 +11,7 @@ if ($expression) {
 // calc expression
     try {
     $result = $calculator->execute($expression);
-    } catch (\avadim\AceCalculator\Exception\CalcException $e) {
+    } catch (\avadim\AceCalculator\Exception\ExecException $e) {
         $error = $e->getErrorMessage();
     } catch (\Exception $e) {
         $error = $e->getMessage();

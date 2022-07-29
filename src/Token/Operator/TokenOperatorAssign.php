@@ -11,7 +11,7 @@
 
 namespace avadim\AceCalculator\Token\Operator;
 
-use avadim\AceCalculator\Exception\CalcException;
+use avadim\AceCalculator\Exception\ExecException;
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
 use avadim\AceCalculator\Generic\AbstractToken;
 use avadim\AceCalculator\Token\TokenScalar;
@@ -47,12 +47,12 @@ class TokenOperatorAssign extends AbstractTokenOperator
      *
      * @return TokenScalar
      *
-     * @throws CalcException
+     * @throws ExecException
      */
     public function execute(array &$stack)
     {
         if (count($stack) < 2) {
-            throw new CalcException('Operator "=" (assign) error', CalcException::CALC_ERROR_OPERATOR);
+            throw new ExecException('Operator "=" (assign) error', ExecException::CALC_ERROR_OPERATOR);
         }
         $variable = array_pop($stack);
         $value = array_pop($stack);

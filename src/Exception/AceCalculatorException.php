@@ -31,4 +31,26 @@ abstract class AceCalculatorException extends \RuntimeException
     const CALC_INCORRECT_EXPRESSION = 33;
     const CALC_WRONG_FUNC_ARGS      = 34;
     const CALC_ERROR_OPERATOR       = 35;
+    const CALC_INCORRECT_IDENTIFIER_EXPR = 36;
+
+    /**
+     * @param int $code
+     * @param array|null $args
+     *
+     * @return void
+     */
+    public static function call(int $code, ?array $args = [])
+    {
+        switch ($code) {
+            case self::CALC_INCORRECT_IDENTIFIER_EXPR:
+                $message = sprintf('Cannot define identifier "%" (incorrect expression or callback)', ...$args);
+                $class = ExecException::class;
+                break;
+            default:
+                $message = 'AceCalculator Runtime Exception';
+                $class = self::class;
+        }
+        throw new $class($message, $code);
+    }
+
 }

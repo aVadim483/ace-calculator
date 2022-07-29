@@ -11,7 +11,7 @@
 
 namespace avadim\AceCalculator\Token\Operator;
 
-use avadim\AceCalculator\Exception\CalcException;
+use avadim\AceCalculator\Exception\ExecException;
 use avadim\AceCalculator\Exception\DivisionByZeroException;
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
 use avadim\AceCalculator\Generic\AbstractToken;
@@ -50,12 +50,12 @@ class TokenOperatorDivide extends AbstractTokenOperator
      * @return TokenScalarNumber
      *
      * @throws DivisionByZeroException
-     * @throws CalcException
+     * @throws ExecException
      */
     public function execute(array &$stack)
     {
         if (count($stack) < 2) {
-            throw new CalcException('Operator "/" (divide) error', CalcException::CALC_ERROR_OPERATOR);
+            throw new ExecException('Operator "/" (divide) error', ExecException::CALC_ERROR_OPERATOR);
         }
         $op2 = array_pop($stack);
         $op1 = array_pop($stack);

@@ -11,7 +11,7 @@
 
 namespace avadim\AceCalculator\Token\Operator;
 
-use avadim\AceCalculator\Exception\CalcException;
+use avadim\AceCalculator\Exception\ExecException;
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
 use avadim\AceCalculator\Generic\AbstractToken;
 use avadim\AceCalculator\Token\TokenScalarNumber;
@@ -67,19 +67,19 @@ class TokenOperatorPlus extends AbstractTokenOperator
      * @param AbstractToken[] $stack
      *
      * @return TokenScalarNumber
-     * @throws CalcException
+     * @throws ExecException
      */
     public function execute(array &$stack)
     {
         if ($this->unary) {
             if (count($stack) < 1) {
-                throw new CalcException('Operator "+" (plus) error', CalcException::CALC_ERROR_OPERATOR);
+                throw new ExecException('Operator "+" (plus) error', ExecException::CALC_ERROR_OPERATOR);
             }
             $op = array_pop($stack);
             $result = $op->getValueNum();
         } else {
             if (count($stack) < 2) {
-                throw new CalcException('Operator "plus" error', CalcException::CALC_ERROR_OPERATOR);
+                throw new ExecException('Operator "plus" error', ExecException::CALC_ERROR_OPERATOR);
             }
             $op2 = array_pop($stack);
             $op1 = array_pop($stack);

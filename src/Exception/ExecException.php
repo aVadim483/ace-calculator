@@ -16,7 +16,7 @@ namespace avadim\AceCalculator\Exception;
  *
  * @package avadim\AceCalculator
  */
-class CalcException extends AceCalculatorException
+class ExecException extends AceCalculatorException
 {
     protected $errorMessage;
 

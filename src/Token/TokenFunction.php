@@ -12,7 +12,7 @@
 namespace avadim\AceCalculator\Token;
 
 use avadim\AceCalculator\Exception\AceCalculatorException;
-use avadim\AceCalculator\Exception\CalcException;
+use avadim\AceCalculator\Exception\ExecException;
 
 /**
  * Class TokenFunction
@@ -26,7 +26,7 @@ class TokenFunction extends TokenIdentifier
      *
      * @return TokenScalar
      *
-     * @throws CalcException
+     * @throws ExecException
      */
     public function execute(array &$stack)
     {
@@ -42,7 +42,7 @@ class TokenFunction extends TokenIdentifier
             }
             else {
                 $error = sprintf('Wrong arguments of function "%s()" (%d expected)', $name, $numArguments);
-                throw new CalcException($error, AceCalculatorException::CALC_WRONG_FUNC_ARGS);
+                throw new ExecException($error, AceCalculatorException::CALC_WRONG_FUNC_ARGS);
             }
         }
         if ($variableArguments) {
@@ -53,7 +53,7 @@ class TokenFunction extends TokenIdentifier
             $token = array_pop($stack);
             if (!$token instanceof TokenLeftBracket) {
                 $error = sprintf('Wrong arguments of function "%s()" (%d expected)', $name, $numArguments);
-                throw new CalcException($error, AceCalculatorException::CALC_WRONG_FUNC_ARGS);
+                throw new ExecException($error, AceCalculatorException::CALC_WRONG_FUNC_ARGS);
             }
         }
         $result = call_user_func_array($callback, array_reverse($args));
