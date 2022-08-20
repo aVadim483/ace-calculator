@@ -17,6 +17,7 @@ use avadim\AceCalculator\Exception\ConfigException;
 use avadim\AceCalculator\Exception\LexerException;
 
 use avadim\AceCalculator\Generic\AbstractTokenOperator;
+use avadim\AceCalculator\Token\Operator\TokenOperator;
 use avadim\AceCalculator\Token\TokenScalar;
 
 /**
@@ -201,7 +202,7 @@ class AceCalculator
      */
     protected function getDefaults()
     {
-        return [
+        $defaults = [
             'options' => [
                 'var_prefix'        => self::VAR_PREFIX,
                 'result_variable'   => self::RESULT_VARIABLE,
@@ -229,28 +230,42 @@ class AceCalculator
             ],
             'functions' => [
                 // name => [callback, minArguments, variableArguments]
-                'abs'   => 'abs',
-                'min'   => ['min', 2, true],
-                'max'   => ['max', 2, true],
-                'avg'   => [static function() { return array_sum(func_get_args()) / func_num_args(); }, 2, true],
-                'sqrt'  => 'sqrt',
-                'log'   => 'log',
-                'log10' => 'log10',
-                'exp'   => 'exp',
-                'floor' => 'floor',
-                'ceil'  => 'ceil',
-                'round' => ['round', 1, true],
-                'sin'   => 'sin',
-                'cos'   => 'cos',
-                'tn'    => 'tan',
-                'tan'   => 'tan',
-                'asin'  => 'asin',
-                'acos'  => 'acos',
-                'atn'   => 'atan',
-                'degrees' => 'rad2deg',
-                'radians' => 'deg2rad',
-                'rad2deg' => 'rad2deg',
-                'deg2rad' => 'deg2rad',
+                'abs'       => 'abs',
+                'acos'      => 'acos',
+                'acosh'     => 'acosh',
+                'asin'      => 'asin',
+                'asinh'     => 'asinh',
+                'atan2'     => 'atan2',
+                'atan'      => 'atan',
+                'atanh'     => 'atanh',
+                'atn'       => 'atan',
+                'avg'       => [static function() { return array_sum(func_get_args()) / func_num_args(); }, 2, true],
+                'ceil'      => 'ceil',
+                'cos'       => 'cos',
+                'cosh'      => 'cosh',
+                'deg2rad'   => 'deg2rad',
+                'degrees'   => 'rad2deg',
+                'exp'       => 'exp',
+                'expm1'     => 'expm1',
+                'floor'     => 'floor',
+                'fmod'      => 'fmod',
+                'hypot'     => 'hypot',
+                'intdiv'    => 'intdiv',
+                'log'       => 'log',
+                'log10'     => 'log10',
+                'log1p'     => 'log1p',
+                'max'       => ['max', 2, true],
+                'min'       => ['min', 2, true],
+                'rad2deg'   => 'rad2deg',
+                'radians'   => 'deg2rad',
+                'rand'      => ['rand', 1],
+                'round'     => ['round', 1, true],
+                'sin'       => 'sin',
+                'sinh'      => 'sinh',
+                'sqrt'      => 'sqrt',
+                'tan'       => 'tan',
+                'tanh'      => 'tanh',
+                'tn'        => 'tan',
             ],
             'variables' => [
                 'pi' => 3.14159265359,
@@ -261,6 +276,16 @@ class AceCalculator
                 'E'  => M_E
             ],
         ];
+        $constants = get_defined_constants(1);
+        if (isset($constants['standard'])) {
+            foreach ($constants['standard'] as $name => $value) {
+                if (strpos($name, 'M_') === 0) {
+                    $defaults['identifiers'][$name] = $value;
+                }
+            }
+        }
+
+        return $defaults;
     }
 
     /**
@@ -483,7 +508,7 @@ class AceCalculator
      * Add variable to executor
      *
      * @param string $variable
-     * @param integer|float $value
+     * @param integer|float|null $value
      *
      * @return AceCalculator
      */
@@ -668,6 +693,10 @@ class AceCalculator
         if ($name instanceof AbstractTokenOperator) {
             $operatorClass = $name;
             $name = $operatorClass->getPattern();
+        }
+        elseif (is_array($operatorClass)) {
+            [$priority, $callback] = $operatorClass;
+            $operatorClass = new TokenOperator($name, $priority, $callback);
         }
         $this->getTokenFactory()->addOperator($name, $operatorClass);
 

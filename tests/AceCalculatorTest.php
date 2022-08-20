@@ -12,7 +12,7 @@ final class AceCalculatorTest extends TestCase
     public function providerExpressions()
     {
         return [
-            ['0.1 + 0.2'],
+            ['0.1 + 0.2 - 0.3'],
             ['1 + 2'],
 
             ['0.1 - 0.2'],
@@ -38,23 +38,28 @@ final class AceCalculatorTest extends TestCase
             ['1 + 2 * (2 - (4+10))^2 + sin(10)'],
             ['sin(10) * cos(50) / min(10, 20/2)'],
 
-            ['100500 * 3.5E5'],
-            ['100500 * 3.5E-5']
+            ['100500 * 3.5e5'],
+            ['100500 * 3.5E-5'],
+
+            ['abs(-4.2)'],
+            ['cos(PI)', 'cos(M_PI)'],
+            ['tn(M_PI_4)', 'tan(M_PI / 4)'],
+            ['M_SQRT2', 'sqrt(2)'],
         ];
     }
 
     /**
      * @dataProvider providerExpressions
      */
-    public function testCalculating($expression)
+    public function testCalculating($calcExpression, $evalExpression = null)
     {
         $calculator = new AceCalculator();
 
         /** @var float $phpResult */
-        $eval = str_replace('^', '**', $expression);
+        $eval = str_replace('^', '**', $evalExpression ?: $calcExpression);
         eval('$phpResult = ' . $eval . ';');
-        print $expression . ' = ' . $phpResult;
-        $this->assertEquals($calculator->execute($expression), $phpResult);
+        print $calcExpression . ' = ' . $phpResult;
+        $this->assertEquals($calculator->execute($calcExpression), $phpResult);
     }
 
 
@@ -104,6 +109,20 @@ final class AceCalculatorTest extends TestCase
         ]);
 
         $this->assertEquals($calculator->execute('THREE * 11'), 33);
+    }
+
+
+    public function testBool()
+    {
+        $calculator = new AceCalculator();
+        $calculator->loadExtension('Bool');
+        $this->assertEquals($calculator->execute('if(100+20 > 111, 23, 34)'), 23);
+        $calculator
+            ->setVar('$var1', 100)
+            ->setVar('$var2', 200)
+        ;
+        $calculator->calc('if($var1==100 || $var2==200, 1, 2)');
+        $this->assertEquals($calculator->result(), 1);
     }
 
 }

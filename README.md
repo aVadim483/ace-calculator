@@ -43,44 +43,62 @@ print $calculator
         ->result();
 ```
 
-## Default operators and functions
+## Default operators, functions and constants
 
 Default operators: `+ - * / ^`
 
 Arithmetic functions
 * abs()
 * avg()
-* min()
-* max()
-* sqrt()
+* ceil()
+* exp()
+* expm1()
+* floor()
+* fmod()
+* hypot()
+* intdiv()
 * log()
 * log10()
-* exp()
-* floor()
-* ceil()
+* log1p()
+* max()
+* min()
+* sqrt()
 * round()
 
 Trigonometric functions
 * acos()
+* acosh()
 * asin()
-* atn()
-* sin()
+* asinh()
+* atan()
+* atan2()
+* atanh()
+* atn() (alias of atan)
 * cos()
-* tn()
-* degrees()
-* rad2deg() (alias of degrees)
-* radians()
+* cosh()
+* deg2rad()
+* degrees() (alias of rad2deg)
+* rad2deg()
+* radians() (alias of deg2rad)
+* sin()
+* sinh()
+* tan()
+* tanh()
+* tn() (alias of tan)
 
+Default constants
+
+PI = 3.14159265358979323846
+E = 2.7182818284590452354
+
+Also you can use any standard math constants from PHP - M_LOG2E, M_PI_2 etc
+```php
+$calculator->execute('cos(PI)');
+$calculator->execute('cos(M_PI)'); // the same result
+```
 ## Variables
 
-Default variables:
-
-```
-$pi = 3.14159265359
-$e = 2.71828182846
-```
-
-You can add own variable to executor:
+You can add own variables to executor and use their in expressions
 
 ```php
 $calculator->setVars([
@@ -106,7 +124,16 @@ $calculator
 You can execute multiple expressions in one by separating them with a semicolon
 ```php
 
-$calculator->execute('$var1=0.15; $var2=0.22; $var3 = $var1 + $var2; $var3 * 20');
+$result1 = $calculator
+    ->setVar('$var1', 0.15)
+    ->setVar('$var2', 0.22)
+    ->calc('$var3 = $var1 + $var2')
+    ->calc('$var3 * 20')
+    ->result()
+;
+// $result2 will be equal $result1
+$result2 = $calculator->execute('$var1=0.15; $var2=0.22; $var3 = $var1 + $var2; $var3 * 20');
+
 ```
 
 ## Extra operators and functions
@@ -143,14 +170,14 @@ $calculator->addFunction('hypotenuse', function($a, $b) {
     return sqrt($a^2 + $b^2);
 }, 2);
 
-// New function round()
+// New function nround()
 //   1 - minimum number of arguments
 //   true - used optional arguments
-$calculator->addFunction('round', function($a, $b = 0) {
+$calculator->addFunction('nround', function($a, $b = 0) {
     return round($a,  $b);
 }, 1, true);
 
-print $calculator->execute('round(hypotenuse(3,4), 2)');
+print $calculator->execute('nround(hypotenuse(3,4), 2)');
 ```
 
 ## Custom operators
@@ -163,13 +190,11 @@ $func = function (array &$stack)
 {
     $op2 = array_pop($stack);
     $op1 = array_pop($stack);
-    $result = $op1->getValue() % $op2->getValue();
-
-    return new \avadim\AceCalculator\Token\TokenScalarNumber($result);
+    
+    return $op1->getValue() % $op2->getValue();
 };
 
-$operator = new TokenOperator('mod', TokenOperator::MATH_PRIORITY_DIVIDE, $func);
-$calculator->addOperator($operator);
+$calculator->addOperator('mod', [TokenOperator::MATH_PRIORITY_DIVIDE, $func]);
 echo $calculator->execute('286 mod 100');
 
 ```

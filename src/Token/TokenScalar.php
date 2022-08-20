@@ -20,4 +20,8 @@ use avadim\AceCalculator\Generic\AbstractToken;
  */
 class TokenScalar extends AbstractToken
 {
+    public function __toString()
+    {
+        return (string)$this->getValue();
+    }
 }
