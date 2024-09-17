@@ -487,7 +487,8 @@ class AceColors
         if (!$alpha) {
             return $hr . $hg . $hb;
         }
-        $a = 255 * $color['a'];
+        $a = (int)round(255 * $color['a']);
+
         return $hr . $hg . $hb . (($a < 16) ? '0' . dechex($a) : dechex($a));
     }
 
