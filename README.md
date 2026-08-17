@@ -2,6 +2,8 @@
 
 [![tests](https://github.com/aVadim483/ace-calculator/actions/workflows/tests.yml/badge.svg)](https://github.com/aVadim483/ace-calculator/actions/workflows/tests.yml)
 
+Documentation: **English** | [Русский](README.ru.md)
+
 You can calculate classical mathematical expressions with variables, 
 or you can specify your own calculation rules, operators or custom functions
 

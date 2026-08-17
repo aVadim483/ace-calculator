@@ -120,6 +120,9 @@ delegate to `Processor::setHandler()`), and the `non_numeric` option, which swit
 
 ## Conventions
 
+- `README.md` (English) and `README.ru.md` (Russian) are translations of each other and must stay in sync:
+  same sections in the same order, **identical PHP code blocks** (only the comments inside them are
+  translated). A quick check — extract the ```` ```php ```` blocks from both files, strip comments, diff.
 - Every `src/` file carries the package header comment block; keep it on new files.
 - Fluent setters return `$this` throughout the public API.
 - New operators extend `AbstractTokenOperator` (implement `getPriority()`, `getAssociation()`, `execute(&$stack)`)
