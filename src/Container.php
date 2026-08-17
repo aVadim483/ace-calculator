@@ -33,7 +33,7 @@ class Container
      */
     public function get($name)
     {
-        return $this->data[$name];
+        return isset($this->data[$name]) ? $this->data[$name] : null;
     }
 
     /**

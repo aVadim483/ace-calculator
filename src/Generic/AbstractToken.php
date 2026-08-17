@@ -96,7 +96,7 @@ abstract class AbstractToken
     {
         if (!is_numeric($this->value)) {
             if (empty($this->options['non_numeric'])) {
-                $caller = debug_backtrace(null, 2);
+                $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
                 $message = 'A non-numeric value ';
                 if (null === $this->value) {
                     $message .= 'NULL';

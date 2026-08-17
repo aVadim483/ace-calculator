@@ -384,7 +384,15 @@ class AceCalculator
     protected function addConfig(array $config)
     {
         $this->applyConfig($config);
-        $this->config = array_merge($this->config, $config);
+        // sections are merged one by one, otherwise the sections of the current config
+        // (functions, operators, etc) would be replaced by the sections of the new one
+        foreach ($config as $section => $options) {
+            if (is_array($options) && isset($this->config[$section]) && is_array($this->config[$section])) {
+                $this->config[$section] = array_merge($this->config[$section], $options);
+            } else {
+                $this->config[$section] = $options;
+            }
+        }
 
         return $this;
     }
@@ -776,6 +784,50 @@ class AceCalculator
     }
 
     /**
+     * Split a string with several expressions separated by ";"
+     * (a semicolon inside a string literal is not a separator)
+     *
+     * @param string $expression
+     *
+     * @return array
+     */
+    protected function splitExpressions(string $expression)
+    {
+        if (false === strpos($expression, ';')) {
+            return [$expression];
+        }
+
+        $expressions = [];
+        $current = '';
+        $quoted = false;
+        $length = strlen($expression);
+        for ($pos = 0; $pos < $length; $pos++) {
+            $char = $expression[$pos];
+            if ($char === '"') {
+                $quoted = !$quoted;
+            }
+            elseif ($char === ';' && !$quoted) {
+                $expressions[] = $current;
+                $current = '';
+                continue;
+            }
+            $current .= $char;
+        }
+        $expressions[] = $current;
+
+        // an empty expression between (or after) the separators is just skipped
+        $result = [];
+        foreach ($expressions as $exp) {
+            if (trim($exp) !== '') {
+                $result[] = $exp;
+            }
+        }
+
+        // there is nothing but separators - let the calculation report an empty expression
+        return $result ?: [''];
+    }
+
+    /**
      * Execute expression
      *
      * @param string $expression
@@ -792,7 +844,7 @@ class AceCalculator
             throw new ExecException('Expression is empty', ExecException::CALC_INCORRECT_EXPRESSION);
         }
         if ($this->multipleExpressions) {
-            $expressions = explode(';', $expression);
+            $expressions = $this->splitExpressions($expression);
         }
         else {
             $expressions = [$expression];
@@ -846,7 +898,15 @@ class AceCalculator
             try {
                 $result = $processor->calculate($this->tokensStack, $this->variables, $this->identifiers);
             } catch (ExecException $e) {
-                $exception = new ExecException('Expression calculation error: ' . $e->getMessage() . '. Expression: ' . $expression);
+                // the class and the code of the original exception are kept,
+                // so UnknownVariable and UnknownIdentifier can still be caught
+                $exceptionClass = get_class($e);
+                /** @var ExecException $exception */
+                $exception = new $exceptionClass(
+                    'Expression calculation error: ' . $e->getMessage() . '. Expression: ' . $expression,
+                    $e->getCode(),
+                    $e
+                );
                 $exception->setErrorMessage($e->getMessage());
                 $exception->setErrorExpression($expression);
                 throw $exception;
@@ -863,7 +923,7 @@ class AceCalculator
     {
         $resultVariable = $this->getConfigOption('result_variable');
         if ($resultVariable) {
-            return $this->getVar(self::RESULT_VARIABLE);
+            return $this->getVar($resultVariable);
         }
         return null;
     }

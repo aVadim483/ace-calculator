@@ -20,7 +20,7 @@ class UnknownVariable extends ExecException
 {
     public function __construct(string $message = '', int $code = 0, $previous = null)
     {
-        if ($code === null) {
+        if (!$code) {
             $code = self::CALC_UNKNOWN_VARIABLE;
         }
         parent::__construct($message, $code, $previous);

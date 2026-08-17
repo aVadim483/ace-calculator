@@ -43,7 +43,7 @@ abstract class AceCalculatorException extends \RuntimeException
     {
         switch ($code) {
             case self::CALC_INCORRECT_IDENTIFIER_EXPR:
-                $message = sprintf('Cannot define identifier "%" (incorrect expression or callback)', ...$args);
+                $message = sprintf('Cannot define identifier "%s" (incorrect expression or callback)', ...$args);
                 $class = ExecException::class;
                 break;
             default:

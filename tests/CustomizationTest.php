@@ -3,6 +3,7 @@
 namespace avadim\AceCalculator\Test;
 
 use avadim\AceCalculator\AceCalculator;
+use avadim\AceCalculator\Exception\ExecException;
 use avadim\AceCalculator\Test\Fixture\TokenOperatorModulus;
 use avadim\AceCalculator\Token\Operator\TokenOperator;
 use PHPUnit\Framework\TestCase;
@@ -79,6 +80,32 @@ final class CustomizationTest extends TestCase
         self::assertEquals(87, $this->calculator->execute('1 + 286 mod 100'));
     }
 
+    /**
+     * A clone keeps everything that was registered before, including the loaded extensions
+     */
+    public function testCloneKeepsConfiguration(): void
+    {
+        $this->calculator->loadExtension('Bool');
+        $clone = clone $this->calculator;
+
+        // base operators and functions
+        self::assertEquals(3, $clone->execute('1 + 2'));
+        self::assertEquals(0, $clone->execute('sin(0)'));
+        // and the ones of the extension
+        self::assertEquals(10, $clone->execute('if(1 > 0, 10, 20)'));
+    }
+
+    /**
+     * An identifier accepts a scalar, a callback or a token, anything else is an error
+     */
+    public function testIncorrectIdentifierValue(): void
+    {
+        $this->expectException(ExecException::class);
+        $this->expectExceptionMessage('Cannot define identifier "X"');
+
+        $this->calculator->setIdentifier('X', new \stdClass());
+    }
+
     public function testDivisionByZeroHandler(): void
     {
         $this->calculator->setDivisionByZeroHandler(static function ($a, $b) {
@@ -143,21 +170,30 @@ final class CustomizationTest extends TestCase
     {
         $this->calculator->setVar('$x', null);
 
-        $warnings = [];
-        set_error_handler(static function ($errno, $errstr) use (&$warnings) {
-            $warnings[] = $errstr;
+        $errors = [];
+        set_error_handler(static function ($errno, $errstr) use (&$errors) {
+            $errors[] = [$errno, $errstr];
 
             return true;
-        }, E_USER_WARNING);
+        });
         try {
             $result = $this->calculator->execute('$x * 12');
         } finally {
             restore_error_handler();
         }
 
+        $warnings = array_column(array_filter($errors, static function ($error) {
+            return $error[0] === E_USER_WARNING;
+        }), 1);
+        $deprecations = array_filter($errors, static function ($error) {
+            return $error[0] === E_DEPRECATED;
+        });
+
         self::assertEquals(0, $result);
         self::assertNotEmpty($warnings);
         self::assertStringContainsString('non-numeric value', $warnings[0]);
+        // the warning itself must not produce a deprecation notice
+        self::assertSame([], $deprecations);
     }
 
     /**

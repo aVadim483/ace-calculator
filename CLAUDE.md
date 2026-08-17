@@ -63,6 +63,11 @@ Functions are stored as the 4-tuple `[$name, $minArguments, $callback, $variable
 `AceCalculator::createFunction()`. In config a function value is `callable` or
 `[callable, minArguments, variableArguments]`; `minArguments === -1` means "0 or more, variadic".
 
+`addConfig()` merges **per section**, not with a flat `array_merge` — otherwise loading an extension would
+replace the whole `functions`/`operators` list in `$this->config`, and `__clone()` (which re-inits from
+`getConfig()`) would hand back a calculator without the base operators. Note that clone still resets
+variables and identifiers to the config defaults, so anything added via `setVar()`/`setIdentifier()` is lost.
+
 ### Token matching (order matters)
 
 Each token class exposes static `getMatching($pattern)` returning `pattern` / `matching` / `callback` /
@@ -75,6 +80,15 @@ Multi-lexeme tokens have two routes: set `$lexemes_max > 1` (the factory concate
 use `MATCH_CALLBACK` with an `isMatch()` that advances `$lexemeNum` by reference and returns the joined string
 — see `Extension\Colors\TokenScalarHexString` assembling `#ff00aa`.
 
+### Reading a token's value
+
+Two accessors, and the difference is load-bearing: operators call `getValueNum()` (the raw value, coerced by
+PHP, honouring the `non_numeric` option), while `TokenFunction::execute()` and the final result of
+`Processor::calculate()` call `getValue()` (typed conversion — `TokenScalarNumber` turns the lexeme into
+int/float, `TokenScalarHexNumber` runs `hexdec()`). A conversion bug in `getValue()` therefore shows up only
+in function arguments and single-literal expressions, never in plain arithmetic — that is exactly how
+`abs(1e-3) == 0` survived unnoticed.
+
 ### Variables vs identifiers
 
 - **Variables** carry the `var_prefix` (`$`, configurable) and live in `AceCalculator::$variables`.
@@ -84,7 +98,8 @@ use `MATCH_CALLBACK` with an `isMatch()` that advances `$lexemeNum` by reference
   latter two are resolved recursively through `Calculator::execute()`, so identifiers can reference other
   identifiers (`'THREE' => 'ONE + TWO'`).
 
-`execute()` = `calc()` + `result()`. `calc()` splits on `;` when `multipleExpressions` is on (default).
+`execute()` = `calc()` + `result()`. `calc()` splits on `;` via `splitExpressions()` when `multipleExpressions`
+is on (default) — the split is quote-aware (`"a;b"` stays one token) and skips empty parts.
 Parsed RPN is cached per expression string in `AceCalculator::$cache` (toggle with `cacheEnable()`).
 
 ### Extensions

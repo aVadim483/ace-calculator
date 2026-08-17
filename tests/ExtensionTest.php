@@ -33,6 +33,21 @@ final class ExtensionTest extends TestCase
         self::assertEquals(1, $this->calculator->execute('1 || 0'));
     }
 
+    /**
+     * "&&" binds stronger than "||", comparisons bind stronger than both
+     */
+    public function testBoolOperatorPriority(): void
+    {
+        $this->calculator->loadExtension('Bool');
+
+        self::assertEquals(1, $this->calculator->execute('1 || 0 && 0'));
+        self::assertEquals(1, $this->calculator->execute('0 && 0 || 1'));
+        self::assertEquals(0, $this->calculator->execute('0 || 1 && 0'));
+        self::assertEquals(1, $this->calculator->execute('1 + 1 == 2'));
+        self::assertEquals(1, $this->calculator->execute('1 == 1 && 2 == 2'));
+        self::assertEquals(1, $this->calculator->execute('1 == 2 || 2 == 2 && 3 == 3'));
+    }
+
     public function testBoolFunctions(): void
     {
         $this->calculator->loadExtension('Bool');

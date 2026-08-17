@@ -4,6 +4,9 @@ namespace avadim\AceCalculator\Test;
 
 use avadim\AceCalculator\AceCalculator;
 use avadim\AceCalculator\Exception\ExecException;
+use avadim\AceCalculator\Exception\UnknownIdentifier;
+use avadim\AceCalculator\Exception\UnknownVariable;
+use avadim\AceCalculator\Token\TokenScalarNumber;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -88,6 +91,40 @@ final class VariablesTest extends TestCase
     }
 
     /**
+     * The name of the result variable is taken from the options
+     */
+    public function testCustomResultVariable(): void
+    {
+        $this->calculator->setOption('result_variable', 'res');
+
+        self::assertEquals(5, $this->calculator->execute('2 + 3'));
+        self::assertEquals(5, $this->calculator->result());
+        self::assertEquals(5, $this->calculator->getVar('$res'));
+    }
+
+    /**
+     * The class and the code of the original exception must survive the calculation
+     */
+    public function testExceptionClassesAndCodes(): void
+    {
+        try {
+            $this->calculator->execute('$undefined');
+            self::fail('UnknownVariable expected');
+        } catch (UnknownVariable $e) {
+            self::assertSame(ExecException::CALC_UNKNOWN_VARIABLE, $e->getCode());
+            self::assertSame('Unknown variable "$undefined"', $e->getErrorMessage());
+            self::assertSame('$undefined', $e->getErrorExpression());
+        }
+
+        try {
+            $this->calculator->execute('UNDEFINED');
+            self::fail('UnknownIdentifier expected');
+        } catch (UnknownIdentifier $e) {
+            self::assertSame(ExecException::CALC_UNKNOWN_IDENTIFIER, $e->getCode());
+        }
+    }
+
+    /**
      * The parsed expression is cached, but variable values are not
      */
     public function testVariableValueIsNotCached(): void
@@ -120,6 +157,17 @@ final class VariablesTest extends TestCase
 
         $this->calculator->removeIdentifier('ONE');
         self::assertNull($this->calculator->getIdentifier('ONE'));
+    }
+
+    /**
+     * An identifier can also be defined as a ready token
+     */
+    public function testIdentifierAsToken(): void
+    {
+        $this->calculator->setIdentifier('X', new TokenScalarNumber(5));
+
+        self::assertEquals(6, $this->calculator->execute('X + 1'));
+        self::assertEquals(10, $this->calculator->execute('X * 2'));
     }
 
     public function testUnknownIdentifier(): void

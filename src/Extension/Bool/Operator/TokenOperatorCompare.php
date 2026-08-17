@@ -23,7 +23,8 @@ class TokenOperatorCompare extends AbstractTokenOperator
 {
     const MATH_PRIORITY_COMPARE     = 0;
     const MATH_PRIORITY_AND         = -1;
-    const MATH_PRIORITY_OR          = -1;
+    // "&&" binds stronger than "||", as in PHP
+    const MATH_PRIORITY_OR          = -2;
 
     protected $priority = self::MATH_PRIORITY_COMPARE;
 

@@ -183,7 +183,8 @@ class Processor
                 $identifier = $token->getValue();
                 if (isset($identifiers[$identifier])) {
                     if ($identifiers[$identifier] instanceof AbstractToken) {
-                        $token = $this->executeToken($token, $stack);
+                        // the identifier is defined as a ready token, take it as is
+                        $token = $identifiers[$identifier];
                     }
                     else {
                         if (is_callable($identifiers[$identifier])) {
@@ -246,7 +247,7 @@ class Processor
             }
         }
         $result = array_pop($stack);
-        if (!empty($stack)) {
+        if (!empty($stack) || !($result instanceof AbstractToken)) {
             throw new ExecException('Incorrect expression ', ExecException::CALC_INCORRECT_EXPRESSION);
         }
 

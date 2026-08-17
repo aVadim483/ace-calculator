@@ -109,6 +109,24 @@ final class AceCalculatorTest extends TestCase
     public function testHexNumbers(): void
     {
         self::assertEquals(14, $this->calculator->execute('0x10 / 4 + 10'));
+        self::assertEquals(16, $this->calculator->execute('abs(0x10)'));
+    }
+
+    /**
+     * A number in the exponential notation must not be truncated to an integer,
+     * even where the value of the token is taken as is (arguments of functions, a single literal)
+     */
+    public function testScientificNotation(): void
+    {
+        self::assertEqualsWithDelta(0.001, $this->calculator->execute('abs(1e-3)'), 1e-12);
+        self::assertEqualsWithDelta(0.001, $this->calculator->execute('min(1e-3, 5)'), 1e-12);
+        self::assertEqualsWithDelta(0.001, $this->calculator->execute('(1e-3)'), 1e-12);
+        self::assertEqualsWithDelta(0.002, $this->calculator->execute('2 * 1e-3'), 1e-12);
+        self::assertEqualsWithDelta(0.0015, $this->calculator->execute('abs(1.5e-3)'), 1e-12);
+
+        // integers stay integers
+        self::assertSame(3, $this->calculator->execute('1 + 2'));
+        self::assertSame(10, $this->calculator->execute('(10)'));
     }
 
     public function testDefaultConstants(): void
@@ -160,6 +178,39 @@ final class AceCalculatorTest extends TestCase
     {
         $this->expectException(ExecException::class);
         $this->calculator->execute('');
+    }
+
+    /**
+     * An expression with no result must not be a fatal error
+     */
+    public function testEmptyBrackets(): void
+    {
+        $this->expectException(ExecException::class);
+        $this->calculator->execute('()');
+    }
+
+    /**
+     * ";" separates expressions, but not inside a string literal
+     */
+    public function testSemicolonInsideString(): void
+    {
+        $this->calculator->addFunction('strlength', static function ($value) {
+            return strlen((string)$value);
+        });
+
+        self::assertEquals(3, $this->calculator->execute('strlength("a;b")'));
+        self::assertEquals(3, $this->calculator->execute('$s = "a;b"; strlength($s)'));
+    }
+
+    /**
+     * Empty parts between the separators are skipped
+     */
+    public function testExtraSemicolons(): void
+    {
+        self::assertEquals(4, $this->calculator->execute('1 + 1;; 2 + 2;'));
+
+        $this->expectException(ExecException::class);
+        $this->calculator->execute(';');
     }
 
     public function testUnknownToken(): void

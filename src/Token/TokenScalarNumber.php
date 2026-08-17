@@ -21,15 +21,13 @@ class TokenScalarNumber extends TokenScalar
     protected static $matching = self::MATCH_NUMERIC;
 
     /**
-     * @return string
+     * @return int|float
      */
     public function getValue()
     {
-        if (is_string($this->value)) {
-            if (false !== strpos($this->value, '.')) {
-                return (float)$this->value;
-            }
-            return (int)$this->value;
+        if (is_string($this->value) && is_numeric($this->value)) {
+            // "12" becomes an integer, "1.2" and "1e-3" become floats
+            return $this->value + 0;
         }
         return $this->value;
     }
