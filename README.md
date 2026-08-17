@@ -1,5 +1,7 @@
 # AceCalculator - flexible universal calculator in PHP
 
+[![tests](https://github.com/aVadim483/ace-calculator/actions/workflows/tests.yml/badge.svg)](https://github.com/aVadim483/ace-calculator/actions/workflows/tests.yml)
+
 You can calculate classical mathematical expressions with variables, 
 or you can specify your own calculation rules, operators or custom functions
 
@@ -20,16 +22,18 @@ Jump To:
 
 ## Installation
 
-|$ composer require avadim/ace-claculator
+```bash
+composer require avadim/ace-calculator
+```
 
-All instructions to install here: https://packagist.org/packages/avadim/ace-claculator
+All instructions to install here: https://packagist.org/packages/avadim/ace-calculator
 
 ## Sample Usage
 
 ```php
 require 'vendor/autoload.php';
 // create the calculator
-$calculator = new \avadim\AceClaculator\AceClaculator();
+$calculator = new \avadim\AceCalculator\AceCalculator();
 
 // calculate expression
 print $calculator->execute('1 + 2 * (2 - (4+10))^2 + sin(10)');
@@ -158,6 +162,8 @@ Add custom function to executor:
 ```php
 $calculator->addFunction('dummy', function($a) {
     // do something
+    $result = $a * 2;
+
     return $result;
 });
 
@@ -166,8 +172,9 @@ print $calculator->execute('dummy(123)');
 // If the function takes more than 1 argument, you must specify this
 
 // New function hypotenuse() with 2 arguments
+// note: "^" is a power operator in expressions, but in PHP code it is "**"
 $calculator->addFunction('hypotenuse', function($a, $b) {
-    return sqrt($a^2 + $b^2);
+    return sqrt($a ** 2 + $b ** 2);
 }, 2);
 
 // New function nround()
@@ -212,14 +219,16 @@ class TokenOperatorModulus extends AbstractTokenOperator
     protected static $pattern = 'mod';
 
     /**
-     * Priority of this operator, more value is more priority 
-     * (1 equals "+" or "-", 2 equals "*" or "/", 3 equals "^")
-     * 
+     * Priority of this operator, more value is more priority
+     * (MATH_PRIORITY_PLUS and MATH_PRIORITY_MINUS equal 10, MATH_PRIORITY_MULTIPLY
+     * and MATH_PRIORITY_DIVIDE equal 20, MATH_PRIORITY_POWER equals 30,
+     * MATH_PRIORITY_UNARY equals 40)
+     *
      * @return int
      */
     public function getPriority()
     {
-        return 3;
+        return self::MATH_PRIORITY_POWER;
     }
 
     /**
@@ -237,7 +246,7 @@ class TokenOperatorModulus extends AbstractTokenOperator
      *
      * @return TokenScalarNumber
      */
-    public function execute(&$stack)
+    public function execute(array &$stack)
     {
         $op2 = array_pop($stack);
         $op1 = array_pop($stack);
@@ -251,7 +260,7 @@ class TokenOperatorModulus extends AbstractTokenOperator
 And add the class to executor:
 
 ```php
-$calculator = new avadim\AceClaculator\AceClaculator();
+$calculator = new avadim\AceCalculator\AceCalculator();
 $calculator->addOperator('mod', \TokenOperatorModulus::class);
 echo $calculator->execute('286 mod 100');
 ```
@@ -330,7 +339,7 @@ echo $calculator->execute('THREE');
 
 ### Unknown Variable
 
-Usually unknown identifier throws a ```UnknownIdentifier```. But you can redefine this behavior
+Usually unknown variable throws a ```UnknownVariable```. But you can redefine this behavior
 
 ```php
 $calculator = new avadim\AceCalculator\AceCalculator();
@@ -339,7 +348,9 @@ $calculator = new avadim\AceCalculator\AceCalculator();
 $calculator->execute('$a * 4');
 
 // Now any undefined variables will be interpreted as 0
-$calculator->setUnknownVariableHandler(static function($variable) {
+// The handler takes the calculator, the name of the unknown variable
+// and the array of all defined variables
+$calculator->setUnknownVariableHandler(static function($calculator, $variable, $variables) {
     return 0;
 });
 $calculator->execute('$a * 4');

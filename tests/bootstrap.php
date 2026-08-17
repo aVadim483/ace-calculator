@@ -1,11 +1,18 @@
 <?php
 
-$vendorDir = __DIR__ . '/../../..';
+$autoloadFiles = [
+    // the package is the root project
+    __DIR__ . '/../vendor/autoload.php',
+    // the package is installed as a dependency
+    __DIR__ . '/../../../autoload.php',
+];
 
-if (file_exists($file = $vendorDir . '/autoload.php')) {
-    require_once $file;
-} else if (file_exists($file = './vendor/autoload.php')) {
-    require_once $file;
-} else {
-    throw new \RuntimeException('Not found composer autoload');
+foreach ($autoloadFiles as $autoloadFile) {
+    if (file_exists($autoloadFile)) {
+        require_once $autoloadFile;
+
+        return;
+    }
 }
+
+throw new \RuntimeException('Composer autoload not found, run "composer install" first');

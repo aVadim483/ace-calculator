@@ -22,12 +22,12 @@ class TokenScalarString extends TokenScalar
     protected static $matching = self::MATCH_REGEX;
 
     /**
-     * @param string $lexeme
+     * @param mixed $lexeme
      * @param array $options
      */
-    public function __construct(string $lexeme, array $options = [])
+    public function __construct($lexeme, array $options = [])
     {
-        if (($lexeme[0] === '"' || $lexeme[0] === '\'') && ($lexeme[0] === substr($lexeme, -1))) {
+        if (is_string($lexeme) && $lexeme !== '' && ($lexeme[0] === '"' || $lexeme[0] === '\'') && ($lexeme[0] === substr($lexeme, -1))) {
             $value = (string)substr($lexeme, 1, -1);
         } else {
             $value = (string)$lexeme;

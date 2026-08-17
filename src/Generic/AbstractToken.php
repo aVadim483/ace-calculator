@@ -55,10 +55,10 @@ abstract class AbstractToken
     protected $processor;
 
     /**
-     * @param string $lexeme
+     * @param mixed $lexeme
      * @param array|null $options
      */
-    public function __construct(string $lexeme, ?array $options = [])
+    public function __construct($lexeme, ?array $options = [])
     {
         $this->lexeme = $lexeme;
         $this->value = $lexeme;
@@ -74,9 +74,9 @@ abstract class AbstractToken
     }
 
     /**
-     * @param string $value
+     * @param mixed $value
      */
-    public function setValue(string $value)
+    public function setValue($value)
     {
         $this->value = $value;
     }
@@ -138,7 +138,7 @@ abstract class AbstractToken
      *
      * @return array
      */
-    public static function getMatching(string $pattern = null)
+    public static function getMatching(?string $pattern = null)
     {
         return [
             'pattern'       => (null === $pattern) ? static::$pattern : $pattern,

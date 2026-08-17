@@ -47,7 +47,7 @@ class Processor
      *
      * @param Container|null $container
      */
-    public function __construct(Container $container = null)
+    public function __construct(?Container $container = null)
     {
         $this->logEnable(true);
         $this->setContainer($container);
@@ -236,7 +236,7 @@ class Processor
                     if ($value instanceof AbstractToken) {
                         $stack[] = $value;
                     }
-                    elseif (is_scalar($value)) {
+                    elseif (null === $value || is_scalar($value)) {
                         $stack[] = $this->getTokenFactory()->createScalarToken($value);
                     }
                     else {

@@ -81,7 +81,7 @@ class TokenFactory
      *
      * @throws ConfigException
      */
-    protected function registerToken(string $name, $tokenClass, string $pattern = null, ?bool $prepend = false)
+    protected function registerToken(string $name, $tokenClass, ?string $pattern = null, ?bool $prepend = false)
     {
         $matching = $tokenClass::getMatching($pattern);
         if (!isset($matching['pattern']) && !isset($matching['matching'])) {
@@ -105,7 +105,7 @@ class TokenFactory
      *
      * @throws ConfigException
      */
-    public function addToken(string $name, string $class, string $pattern = null)
+    public function addToken(string $name, string $class, ?string $pattern = null)
     {
         $this->registerToken($name, $class, $pattern, false);
     }

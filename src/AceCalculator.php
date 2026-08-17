@@ -235,7 +235,7 @@ class AceCalculator
                 'acosh'     => 'acosh',
                 'asin'      => 'asin',
                 'asinh'     => 'asinh',
-                'atan2'     => 'atan2',
+                'atan2'     => ['atan2', 2],
                 'atan'      => 'atan',
                 'atanh'     => 'atanh',
                 'atn'       => 'atan',
@@ -248,17 +248,17 @@ class AceCalculator
                 'exp'       => 'exp',
                 'expm1'     => 'expm1',
                 'floor'     => 'floor',
-                'fmod'      => 'fmod',
-                'hypot'     => 'hypot',
-                'intdiv'    => 'intdiv',
-                'log'       => 'log',
+                'fmod'      => ['fmod', 2],
+                'hypot'     => ['hypot', 2],
+                'intdiv'    => ['intdiv', 2],
+                'log'       => ['log', 1, true],
                 'log10'     => 'log10',
                 'log1p'     => 'log1p',
                 'max'       => ['max', 2, true],
                 'min'       => ['min', 2, true],
                 'rad2deg'   => 'rad2deg',
                 'radians'   => 'deg2rad',
-                'rand'      => ['rand', 1],
+                'rand'      => ['rand', -1],
                 'round'     => ['round', 1, true],
                 'sin'       => 'sin',
                 'sinh'      => 'sinh',
@@ -439,7 +439,7 @@ class AceCalculator
      *
      * @throws ConfigException
      */
-    public function loadExtension(string $extensionName, string $path = null)
+    public function loadExtension(string $extensionName, ?string $path = null)
     {
         if (!isset($this->extensions[$extensionName])) {
             if (null === $path) {
@@ -786,7 +786,7 @@ class AceCalculator
      * @throws LexerException
      * @throws ExecException
      */
-    public function calc(string $expression, string $resultVariable = null)
+    public function calc(string $expression, ?string $resultVariable = null)
     {
         if ($expression === '') {
             throw new ExecException('Expression is empty', ExecException::CALC_INCORRECT_EXPRESSION);
@@ -879,7 +879,7 @@ class AceCalculator
      * @throws ExecException
      * @throws LexerException
      */
-    public function execute(string $expression, string $resultVariable = null)
+    public function execute(string $expression, ?string $resultVariable = null)
     {
         $this->calc($expression, $resultVariable);
 
